@@ -1,0 +1,85 @@
+/*
+
+* Override Pages default styles or create your own styles here
+
+*/
+
+.back-img1 {
+	background-color: #8284D1;
+}
+.back-img2 {
+	background-color: #48B0F7;
+}
+.back-img3 {
+	background-color: #10CFBD;
+}
+.back-img4 {
+	background-color: #939393;
+}
+
+.edit-options{
+	font-size: 20px;
+	float: right;
+	padding-bottom: 15px;
+	margin-right: 10px;
+}
+.edit-options span {
+	margin: 0px 6px;
+}
+.offer-range{
+	font-size: 12px;
+	font-size: bold;
+	padding-bottom: 10px;
+	padding-left: 20px;
+}
+.offer-range span{
+	margin-left: 10px;
+}
+
+.item-details .dialog__content .dialog__overview .add-now {
+  position: absolute;
+  bottom: 20px;
+  right: 105px;
+}
+
+.gallery-item{
+	margin-left: 10px;
+	 display: inline-block;	
+}
+.gallery-filters{
+	position:relative;
+	top:-40px; 
+	margin-right:50px;
+}
+.gallery{
+	margin-top: 0px;
+}
+
+.error-msg{
+	color:red; 
+	font-weight:300;
+	float: right;
+	margin-right: 20px;
+}
+.offer-global{
+	font-size: 12px !important;
+	color: #3A8FC8;
+}
+
+
+.offer-global i{
+	font-size: 16px !important;
+	float: left;
+	margin-left: 4px;
+	margin-left: 4px !important;
+}
+
+ 
+
+.txt{
+	padding: 2px 5px 2px 5px;
+	background-color: red;
+	border-radius: 10px;
+	color: #fff;
+	margin-left: 4px !important;
+}
