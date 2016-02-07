@@ -495,7 +495,7 @@ class AdminController extends Controller
 		$stores = MerchantStore::whereHas('Tags', function ($query) use ($id){
 		    $query->where('id',$id);
 		})->with(['Address','Tags','Merchant','Offers'])->paginate(10);
-		//return $stores;
+
 		$output['stores'] = $stores;
 		return view('admin.stores',$output);
 	}
