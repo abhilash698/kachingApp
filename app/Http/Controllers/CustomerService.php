@@ -96,7 +96,7 @@ class CustomerService extends Controller {
         $user_id = Auth::user()->id;
 		$input = $request->only('tags');
 		if (empty($input['tags'])) {
-			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.cost_two,address.latitude,address.longitude,merchant.mobile,merchant.name, 
+			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
 			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
@@ -110,14 +110,15 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL;"
+			        	where offers.status = 1 AND offers.deleted_at IS NULL
+			        	ORDER BY distance DESC;"
 		        	));
 		}
 		else{
 			/*$tags = explode(',', $input['tags']); 
 			$in = "IN ('" . implode("', '", $tags) . "')";*/
 
-			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.cost_two,address.latitude,address.longitude,merchant.mobile,merchant.name, 
+			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
 			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
@@ -132,7 +133,8 @@ class CustomerService extends Controller {
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
 			        	left join tag_store on tag_store.store_id = offers.store_id and tag_store.tag_id IN (".$input['tags'].")
-			        	where offers.status = 1 AND offers.deleted_at IS NULL;"
+			        	where offers.status = 1 AND offers.deleted_at IS NULL
+			        	ORDER BY distance DESC;"
 		        	));
 			
 			 
@@ -161,13 +163,13 @@ class CustomerService extends Controller {
 			$offer = Offers::find($input['offer_id']);
 			$offer->Favourites()->detach([$user_id]);
 
-			return response()->json([ 'response_code' => 'ERR_FR' , 'messages' => 'Favourite Removed' ],204);
+			return response()->json([ 'response_code' => 'ERR_FR' , 'messages' => 'Favourite Removed' ]);
 		}
 		
 		$offer = Offers::find($input['offer_id']);
 		$offer->Favourites()->attach([$user_id]);
 
-		return response()->json(['response_code' => 'RES_OMF' , 'messages' => 'Offer Made favourite'],204);
+		return response()->json(['response_code' => 'RES_OMF' , 'messages' => 'Offer Made favourite']);
 	}
 
 	public function makeVote(request $request){
@@ -186,14 +188,74 @@ class CustomerService extends Controller {
 			$offer = Offers::find($offer_id);
 			/*$offer->Votes()->updateExistingPivot($user_id,['status'=>$input['status']]);*/
 			$offer->Votes()->detach([$user_id]);;
-			return response()->json([ 'response_code' => 'ERR_OVR' , 'messages' => 'Offer Vote Removed' ],204);
+			return response()->json([ 'response_code' => 'ERR_OVR' , 'messages' => 'Offer Vote Removed' ]);
 		}
 
 		$offer = Offers::find($offer_id);
 		$offer->Votes()->attach([$user_id]); 
 
-		return response()->json(['response_code' => 'RES_OMF' , 'messages' => 'Offer Voted'],204);
+		return response()->json(['response_code' => 'RES_OMF' , 'messages' => 'Offer Voted']);
 
+	}
+
+	public function userFavOffers(request $request){
+		$location = $request->only('latitude','longitude');
+        $user_id = Auth::user()->id;
+
+        $offers = DB::select(DB::raw("select users.id , users.name, offers.title, offers.startDate, offers.endDate, offers.fineprint,
+        	                        store.store_name , store.logoUrl , store.cost_two, store.landline ,address.latitude,address.longitude,
+        	                        (select count(*) from offer_vote where offer_id = offers.id) as votes, 
+						        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted , 
+						        	(select GROUP_CONCAT(tag_id SEPARATOR ',') FROM tag_store where store_id=offers.store_id GROUP BY store_id) as tags,
+						        	(((acos(sin((".$location['latitude']."*pi()/180)) * 
+							            sin((`Latitude`*pi()/180))+cos((".$location['latitude']."*pi()/180)) * 
+							            cos((`Latitude`*pi()/180)) * cos(((".$location['longitude']."- `Longitude`)* 
+							            pi()/180))))*180/pi())*60*1.1515
+							        ) as distance  
+                                    from users
+                                    right join offer_favourite on offer_favourite.user_id = users.id
+                                    left join offers on offers.id = offer_favourite.offer_id
+                                    left join merchant_store as store on store.id = offers.store_id
+                                    left join merchant_store_address as address on address.store_id = store.id
+                                    where users.id = ".$user_id."
+                                    "));
+
+        return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers]);
+		 
+	}
+
+	public function userProfile(){
+		$user_id = Auth::user()->id;
+		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => User::find($user_id)]);
+	}
+
+	public function editProfile(request $request){
+		$rules = array(
+        'email' => 'unique:users',
+        );
+
+        $validator = $this->customValidator($request->all(),$rules,array());
+        if($validator->fails()){
+            return response()->json([ 'response_code' => 'ERR_EAE' , 'message' => 'Email Already Exists' ],409); 
+        }
+
+		$user_id = Auth::user()->id;
+		$user = User::find($user_id);
+		foreach ($request->only('name','email') as $key => $value) {
+			$user->$key = $value;
+		}
+
+		if($request->hasFile('profileImg'))
+		{
+			$image = $request->file('profileImg');
+	        $imageName = strtotime(Carbon::now()).md5($user_id).'.'. $image->getClientOriginalExtension();
+	        $path = public_path('assets/img/users/'.$imageName);
+	        Image::make($image->getRealPath())->resize(280,240)->save($path);
+	        $user->profileImg = $imageName;
+	    }
+
+		$user->save();
+		return response()->json(['response_code' => 'RES_UU' , 'messages' => 'User Upadated','data' => $user ]);
 	}
 
 }

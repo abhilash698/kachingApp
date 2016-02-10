@@ -425,6 +425,7 @@ class AdminController extends Controller
 			'user_id' => 'required',
             'store_name' => 'required|max:255',
             'description' => 'required|min:10',
+            'landline' => 'required',
             'status' => 'required',
             'street' => 'required|max:200',
             'city_id' => 'required',
@@ -444,7 +445,7 @@ class AdminController extends Controller
         }
         
 
-        $store = MerchantStore::create($request->only('user_id','store_name','description','status'));
+        $store = MerchantStore::create($request->only('user_id','store_name','description','landline','status'));
         $store->Address()->create($request->only('street','city_id','state_id','country_id','pincode','latitude','longitude'));
 
         $image = $request->file('logo');
@@ -529,6 +530,7 @@ class AdminController extends Controller
 			'store_id' => 'required',
             'store_name' => 'required|max:255',
             'description' => 'required|min:10',
+            'landline' => 'required',
             'cost_two' => 'required',
             'status' => 'required',
             'street' => 'required|max:200',
@@ -549,7 +551,7 @@ class AdminController extends Controller
         
 
         $store = MerchantStore::find($input['store_id']);
-		foreach ($request->only('store_name','description','cost_two','status') as $key => $value) {
+		foreach ($request->only('store_name','description','cost_two','landline','status') as $key => $value) {
 			$store->$key = $value;
 		}
 

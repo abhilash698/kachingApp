@@ -17,6 +17,7 @@ class CreateMerchantStoreTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('store_name',100);
+            $table->string('landline', 20)->nullable();
             $table->string('logoUrl', 200)->default('default.jpg');
             $table->text('description');
             $table->integer('cost_two');

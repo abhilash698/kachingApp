@@ -28,6 +28,7 @@ $factory->define(App\MerchantStore::class, function (Faker\Generator $faker) {
         'logoUrl' => 'default.jpg',
         'description' => $faker->sentence($nbWords = 10),
         'cost_two' => '500',
+        'landline' => $faker->phoneNumber, 
     ];
 });
 

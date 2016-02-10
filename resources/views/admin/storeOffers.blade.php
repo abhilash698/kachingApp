@@ -37,9 +37,9 @@
                           <h3>{{ $store->store_name }}</h3>
                           <p>{{  $store->description }}</p>
                           <div class="row m-b-20 m-t-20">
-                            <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Numer</span>
+                            <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Contact</span>
                             </div>
-                            <div class="col-xs-6 text-right">+91 {{ $store->merchant->mobile}}</div>
+                            <div class="col-xs-6 text-right">+91 {{ $store->merchant->mobile }} / {{ $store->landline }}</div>
                           </div>
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Email</span>

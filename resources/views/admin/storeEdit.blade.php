@@ -67,7 +67,10 @@
                           <label>Description <span class='error-msg'>{{ $errors->first('description') }}</span></label>
                           <textarea name='description' style="width:100%; height: 150px;">{{ $store->description }}</textarea>
                         </div>
-
+                        <div class="form-group form-group-default required">
+                          <label>Landline <span class='error-msg'>{{ $errors->first('landline') }}</span></label>
+                          <input type="text" class="form-control" value='{{$store->landline}}'  name="landline" required>
+                        </div>
                         <div class="form-group form-group-default required">
                           <label>Cost for Two <span class='error-msg'>{{ $errors->first('cost_two') }}</span></label>
                           <input type="text" class="form-control" value='{{$store->cost_two}}' name="cost_two" required>

@@ -61,6 +61,16 @@
                           <input type="text" class="form-control"  name="store_name" required>
                         </div>
                         <div class="form-group form-group-default required">
+                          <label>Landline <span class='error-msg'>{{ $errors->first('landline') }}</span></label>
+                          <input type="text" class="form-control"  name="landline" required>
+                        </div>
+                        
+                        <div class="form-group form-group-default required">
+                          <label>Cost for Two <span class='error-msg'>{{ $errors->first('cost_two') }}</span></label>
+                          <input type="text" class="form-control"  name="cost_two" required>
+                        </div>
+
+                        <div class="form-group form-group-default required">
                           <label>Description <span class='error-msg'>{{ $errors->first('description') }}</span></label>
                           <textarea name='description' style="width:100%; height: 150px;"></textarea>
                         </div>

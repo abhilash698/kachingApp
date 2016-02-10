@@ -199,9 +199,17 @@ class AuthController extends Controller
         ->asJson()
         ->get();
 
+
+        if (empty($userImg)) {
+            return response()->json(['response_code'=> 'ERR_IAT' ,'message'=> 'Invalid Access Token'],400);
+        }
+
         $customer['email'] = $user->email;
         $customer['name'] = $user->name;
         $customer['profileImg'] = $userImg->image->url;
+
+        
+        
 
         $customerRole = Role::find(1);
         

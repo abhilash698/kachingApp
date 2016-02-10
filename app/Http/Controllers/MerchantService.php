@@ -17,6 +17,7 @@ use Image;
 use App\TempMobile;
 use Hash;
 use Crypt;
+use App\AppElement;
 
 class MerchantService extends Controller {
 
@@ -149,6 +150,9 @@ class MerchantService extends Controller {
 			'description' => 'required|min:10',
 			'tags' => 'required',
 			'cost_two' => 'required',
+			'landline' => 'required',
+			'about' => 'required',
+			'support' => 'required',
 			);
 		$Validator = $this->customValidator($request->all(), $rules, array());
 		
@@ -157,7 +161,7 @@ class MerchantService extends Controller {
 		}
 
 		
-		$storeInput = $request->only('store_name','description','cost_two');
+		$storeInput = $request->only('store_name','description','cost_two','landline');
 		$storeInput['user_id'] = Auth::id();
 
 		$tags = $request->only('tags');
@@ -189,7 +193,7 @@ class MerchantService extends Controller {
 		}
 
 		$store = MerchantStore::find($store_id['store_id']);
-		foreach ($request->only('store_name','description','cost_two','status') as $key => $value) {
+		foreach ($request->only('store_name','description','cost_two','status','landline') as $key => $value) {
 			$store->$key = $value;
 		}
 
@@ -350,12 +354,13 @@ class MerchantService extends Controller {
 		$user_id = Auth::user()->id;
 		$store = MerchantStore::with('Merchant','Address','Tags')->where('user_id',$user_id)->first();
 		$user = User::where('id','=',$user_id)->first();
+		$AppElement = AppElement::find(1);
 
 		if($store == '' || empty($store)){
-			return response()->json(['response_code' => 'RES_SE' , 'messages' => 'Store Empty','data' => $user ]);
+			return response()->json(['response_code' => 'RES_SE' , 'messages' => 'Store Empty','data' => [ 'user' => $user , 'app_elements' =>$AppElement] ]);
 		}
 		 
-		return response()->json(['response_code' => 'RES_SD' , 'messages' => 'Store Details' , 'data' => ['store' => $store , 'user' => $user ] ]);
+		return response()->json(['response_code' => 'RES_SD' , 'messages' => 'Store Details' , 'data' => ['store' => $store , 'user' => $user ,'app_elements' => $AppElement ] ]);
 	}
 
 	public function editProfile(request $request){

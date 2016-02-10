@@ -39,6 +39,9 @@ Route::group(['prefix' => 'api/customer/v1', 'middleware' => ['api:customer']], 
     Route::post('/offers', 'CustomerService@getOffers');
     Route::post('/favourite','CustomerService@makeFavoutite');
     Route::post('/vote','CustomerService@makeVote');
+    Route::post('/favOffers','CustomerService@userFavOffers');
+    Route::post('/profile','CustomerService@userProfile');
+    Route::post('/profile/edit','CustomerService@editProfile');
     //Route::post('/validateOtp','CustomerService@validateOtp');
     //Route::post('/resendOtp','CustomerService@resendOtp');
 });
