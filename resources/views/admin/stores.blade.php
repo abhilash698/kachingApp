@@ -58,7 +58,7 @@
                       </div>
                       <div class="" style='margin:0px 0px 50px 0px;'>
                         <h4 class="pull-left bold text-white fs-14  p-t-10" style='line-height:normal;'>
-                          @foreach ($store->tags as $tag)
+                          @foreach ($store->Tags as $tag)
                           <span style='background-color:#0D6185; padding:4px; margin-right:4px;'>{{ $tag->title }} </span>
                           @endforeach
                         </h4>
@@ -69,7 +69,7 @@
                           <img alt="Profile Image" width="40" height="40" data-src-retina="{{  url('assets/img/users') }}/{{ $store->merchant->profileImg }}" data-src="{{  url('assets/img/users') }}/{{ $store->merchant->profileImg }}" src="{{  url('assets/img/users') }}/{{ $store->merchant->profileImg }}">
                         </div>
                         <div class="inline m-l-10">
-                          <p class="no-margin text-white fs-12">{{ $store->merchant->name }}</p>
+                          <p class="no-margin text-white fs-12">{{ $store->Merchant->name }}</p>
                           <p class="no-margin text-white fs-12">{{ $store->status ? 'Active':'InActive' }}</p>
                         </div>
                          
@@ -134,12 +134,12 @@
               <div class="row m-b-20 m-t-20">
                 <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Contact</span>
                 </div>
-                <div class="col-xs-6 text-right">+91 {{ $store->merchant->mobile }} / {{ $store->landline }}</div>
+                <div class="col-xs-6 text-right">+91 {{ $store->Merchant->mobile }} / {{ $store->landline }}</div>
               </div>
               <div class="row m-b-20 m-t-20">
                 <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Email</span>
                 </div>
-                <div class="col-xs-6 text-right">{{ $store->merchant->email}}</div>
+                <div class="col-xs-6 text-right">{{ $store->Merchant->email}}</div>
               </div>
               <div class="row m-b-20 m-t-20">
                 <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Cost for Two</span>
@@ -149,7 +149,7 @@
               <div class="row m-b-20 m-t-20">
                 <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Store Address</span>
                 </div>
-                <div class="col-xs-6 text-right">{{ $store->address->street.', '.$store->address->city->title }}</div>
+                <div class="col-xs-6 text-right">@if(isset($store->Address)){{ $store->Address->street.', '.$store->Address->City->title }}@endif </div>
               </div>
               <div class="row m-b-20 m-t-20">
                 <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Created Time</span>
@@ -173,14 +173,14 @@
                     </div>
                     <a href="/admin/user/{{$store->merchant->id}}">
                     <div class="inline m-l-15">
-                      <p class="text-white no-margin"> {{ $store->merchant->name }}</p>
+                      <p class="text-white no-margin"> {{ $store->Merchant->name }}</p>
                       <p class="hint-text text-white no-margin fs-12">{{$store->status ? 'Active':'InActive'}}</p>
                     </div>
                     </a>
                   </div>
                   
                   <div class="col-xs-5 col-xs-height col-middle text-right  no-padding">
-                    <a href="/admin/store/{{ $store->id }}/offers/all"><h2 class="bold text-white price font-montserrat"><small>OFFERS</small> {{ $store->offers->count() }}</h2></a>
+                    <a href="/admin/store/{{ $store->id }}/offers/all"><h2 class="bold text-white price font-montserrat"><small>OFFERS</small> {{  $store->offers->count() }}</h2></a>
                   </div>
                 </div>
               </div>

@@ -69,7 +69,7 @@
                         </div>
                         <div class="form-group form-group-default required">
                           <label>Password <span class='error-msg'>{{ $errors->first('password') }}</span></label>
-                          <input type="text" class="form-control" value='' name="password" required>
+                          <input type="password" class="form-control" value='' name="password" required>
                         </div>
                         
                       </div>

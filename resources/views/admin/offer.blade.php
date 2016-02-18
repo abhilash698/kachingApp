@@ -42,7 +42,7 @@
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Store Name</span>
                             </div>
-                            <div class="col-xs-6 text-right">{{ $offer->store->store_name}}</div>
+                            <div class="col-xs-6 text-right">{{ $offer->Store->store_name}}</div>
                           </div>
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Offer Start Date</span>

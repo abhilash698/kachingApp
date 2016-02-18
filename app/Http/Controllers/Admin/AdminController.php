@@ -338,7 +338,7 @@ class AdminController extends Controller
 		$validator = Validator::make($request->all(), [
             'mobile' => 'required|size:10',
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:users',
             'status' => 'required',
             'password' => 'required|min:6'
         ]);
@@ -430,6 +430,7 @@ class AdminController extends Controller
             'street' => 'required|max:200',
             'city_id' => 'required',
             'state_id' => 'required',
+            'cost_two' => 'required',
             'country_id' => 'required',
             'pincode' => 'required',
             'latitude' => 'required',
@@ -445,7 +446,7 @@ class AdminController extends Controller
         }
         
 
-        $store = MerchantStore::create($request->only('user_id','store_name','description','landline','status'));
+        $store = MerchantStore::create($request->only('user_id','store_name','description','cost_two','landline','status'));
         $store->Address()->create($request->only('street','city_id','state_id','country_id','pincode','latitude','longitude'));
 
         $image = $request->file('logo');

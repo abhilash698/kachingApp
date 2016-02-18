@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Cities;
 use App\Countries;
 use App\States;
+use App\AppElement;
  
 
 class ElementService extends Controller {
@@ -18,5 +19,10 @@ class ElementService extends Controller {
 
 	 public function getCountries(){
 	 	return response()->json(['response_code' => 'RES_CTS' , 'messages' => 'Countries' , 'data' => Countries::get()]);
+	 }
+
+	 public function appElements(){
+	 	$AppElement = AppElement::find(1);
+	 	return response()->json(['response_code' => 'RES_SE' , 'messages' => 'App Elemets','data' => $AppElement ]);
 	 }
 }

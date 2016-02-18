@@ -33,6 +33,7 @@ Route::post('customer/check', 'Test@postTest');
 Route::get('api/cities', 'ElementService@getCities');
 Route::get('api/states', 'ElementService@getStates');
 Route::get('api/Countries', 'ElementService@getCountries');
+Route::get('api/appElements', 'ElementService@appElements');
 
 Route::group(['prefix' => 'api/customer/v1', 'middleware' => ['api:customer']], function() {
     Route::post('/tags', 'CustomerService@getTags'); 
@@ -53,6 +54,10 @@ Route::post('api/merchant/login', 'Auth\AuthController@postMerchantLogin');
 Route::post('api/merchant/register', 'Auth\AuthController@postMerchantRegister');
 Route::post('api/merchant/validateOtp', 'ValidateMobileController@validateOtp');
 Route::post('api/merchant/sendOtp', 'ValidateMobileController@sendMerchantOtp');
+
+Route::post('api/merchant/forgotOtp', 'ValidateMobileController@forgotPasswordOtp');
+Route::post('api/merchant/verifyForgotOtp', 'ValidateMobileController@verifyForgotOtp');
+Route::post('api/merchant/changepassword', 'ValidateMobileController@changePassword');
 
 Route::group(['prefix' => 'api/merchant/v1', 'middleware' => ['api:merchant']], function() {
     Route::post('/add/store','MerchantService@postStore');

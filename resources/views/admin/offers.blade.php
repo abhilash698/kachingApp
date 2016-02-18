@@ -33,9 +33,9 @@
                        
                       <div class="card-header clearfix">
                         <div class="user-pic">
-                          <img alt="Profile Image" width="33" height="33" data-src-retina="{{  url('assets/img/users') }}/{{ $offer->store->merchant->profileImg }}" data-src="{{  url('assets/img/users') }}/{{ $offer->store->merchant->profileImg }}" src="{{  url('assets/img/users') }}/{{ $offer->store->merchant->profileImg }}">
+                          <img alt="Profile Image" width="33" height="33" data-src-retina="{{  url('assets/img/users') }}/{{ $offer->Store->Merchant->profileImg }}" data-src="{{  url('assets/img/users') }}/{{ $offer->Store->Merchant->profileImg }}" src="{{  url('assets/img/users') }}/{{ $offer->Store->Merchant->profileImg }}">
                         </div>
-                        <h5>{{$offer->store->merchant->name}}</h5>
+                        <h5>{{$offer->Store->Merchant->name}}</h5>
                         <h6>created at
                                 <span class="location semi-bold"><i class="fa fa-map-marker"></i> {{$offer->created_at}}</span>
                             </h6>
@@ -44,7 +44,7 @@
                         <div class="flip"> 
             						  <div class="card"> 
             						    <div class="face front">
-                              <p class='head-offer'>{{ $offer->store->store_name }}</p>
+                              <p class='head-offer'>{{ $offer->Store->store_name }}</p>
                               <p class='offer-txt'>{{$offer->title}}.</p>
                               <hr>
                               <div class='row' style='width:100%;display: inline-block; padding-top:0px;'>

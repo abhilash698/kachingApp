@@ -42,12 +42,12 @@
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Contact </span>
                             </div>
-                            <div class="col-xs-6 text-right">+91 {{ $store->merchant->mobile }} / {{ $store->landline }}</div>
+                            <div class="col-xs-6 text-right">+91 {{ $store->Merchant->mobile }} / {{ $store->landline }}</div>
                           </div>
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Email</span>
                             </div>
-                            <div class="col-xs-6 text-right">{{ $store->merchant->email}}</div>
+                            <div class="col-xs-6 text-right">{{ $store->Merchant->email}}</div>
                           </div>
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Cost for Two</span>
@@ -57,7 +57,7 @@
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Store Address</span>
                             </div>
-                            <div class="col-xs-6 text-right">{{ $store->address->street.', '.$store->address->city->title }}</div>
+                            <div class="col-xs-6 text-right">@if(isset($store->Address)){{ $store->Address->street.', '.$store->Address->City->title }}@endif</div>
                           </div>
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Created Time</span>
@@ -69,15 +69,15 @@
                           <a href="/admin/store/{{ $store->id }}/edit"><button class="btn btn-primary buy-now">Edit</button></a>
                           <br><br>
                           <div>
-                            <a href="/admin/user/{{$store->merchant->id}}">
+                            <a href="/admin/user/{{$store->Merchant->id}}">
                             <div class="profile-img-wrapper m-t-5 inline">
-                              <img alt="Profile Image" width="33" height="33" data-src-retina="{{  url('assets/img/users') }}/{{ $store->merchant->profileImg }}" data-src="{{  url('assets/img/users') }}/{{ $store->merchant->profileImg }}" src="{{  url('assets/img/users') }}/{{ $store->merchant->profileImg }}">
+                              <img alt="Profile Image" width="33" height="33" data-src-retina="{{  url('assets/img/users') }}/{{ $store->Merchant->profileImg }}" data-src="{{  url('assets/img/users') }}/{{ $store->Merchant->profileImg }}" src="{{  url('assets/img/users') }}/{{ $store->Merchant->profileImg }}">
                               <div class="chat-status available">
                               </div>
                             </div>
                             <div class="inline m-l-10">
-                              <p class="small hint-text m-t-5">{{$store->merchant->name}}
-                                <br> {{ $store->merchant->email }}</p>
+                              <p class="small hint-text m-t-5">{{$store->Merchant->name}}
+                                <br> {{ $store->Merchant->email }}</p>
                             </div>
                             </a>
                           </div>

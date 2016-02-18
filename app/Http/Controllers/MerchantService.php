@@ -150,9 +150,7 @@ class MerchantService extends Controller {
 			'description' => 'required|min:10',
 			'tags' => 'required',
 			'cost_two' => 'required',
-			'landline' => 'required',
-			'about' => 'required',
-			'support' => 'required',
+			'landline' => 'required', 
 			);
 		$Validator = $this->customValidator($request->all(), $rules, array());
 		
@@ -200,7 +198,7 @@ class MerchantService extends Controller {
 		if($request->hasFile('logo'))
 		{
 			$image = $request->file('logo');
-	        $imageName = strtotime(Carbon::now()).md5($input['store_id']).'.'. $image->getClientOriginalExtension();
+	        $imageName = strtotime(Carbon::now()).md5($store_id['store_id']).'.'. $image->getClientOriginalExtension();
 	        $path = public_path('assets/img/stores/'.$imageName);
 	        Image::make($image->getRealPath())->resize(280,240)->save($path);
 	        $store->logoUrl = $imageName;
@@ -354,13 +352,12 @@ class MerchantService extends Controller {
 		$user_id = Auth::user()->id;
 		$store = MerchantStore::with('Merchant','Address','Tags')->where('user_id',$user_id)->first();
 		$user = User::where('id','=',$user_id)->first();
-		$AppElement = AppElement::find(1);
-
+		
 		if($store == '' || empty($store)){
-			return response()->json(['response_code' => 'RES_SE' , 'messages' => 'Store Empty','data' => [ 'user' => $user , 'app_elements' =>$AppElement] ]);
+			return response()->json(['response_code' => 'RES_SE' , 'messages' => 'Store Empty','data' => [ 'user' => $user] ]);
 		}
 		 
-		return response()->json(['response_code' => 'RES_SD' , 'messages' => 'Store Details' , 'data' => ['store' => $store , 'user' => $user ,'app_elements' => $AppElement ] ]);
+		return response()->json(['response_code' => 'RES_SD' , 'messages' => 'Store Details' , 'data' => ['store' => $store , 'user' => $user ] ]);
 	}
 
 	public function editProfile(request $request){

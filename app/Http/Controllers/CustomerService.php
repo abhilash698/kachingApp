@@ -111,7 +111,7 @@ class CustomerService extends Controller {
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
 			        	where offers.status = 1 AND offers.deleted_at IS NULL
-			        	ORDER BY distance DESC;"
+			        	ORDER BY distance ASC;"
 		        	));
 		}
 		else{
@@ -134,7 +134,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
 			        	left join tag_store on tag_store.store_id = offers.store_id and tag_store.tag_id IN (".$input['tags'].")
 			        	where offers.status = 1 AND offers.deleted_at IS NULL
-			        	ORDER BY distance DESC;"
+			        	ORDER BY distance ASC;"
 		        	));
 			
 			 
@@ -202,7 +202,7 @@ class CustomerService extends Controller {
 		$location = $request->only('latitude','longitude');
         $user_id = Auth::user()->id;
 
-        $offers = DB::select(DB::raw("select users.id , users.name, offers.title, offers.startDate, offers.endDate, offers.fineprint,
+        $offers = DB::select(DB::raw("select offers.id ,users.id as user_id , users.name, offers.title, offers.startDate, offers.endDate, offers.fineprint,
         	                        store.store_name , store.logoUrl , store.cost_two, store.landline ,address.latitude,address.longitude,
         	                        (select count(*) from offer_vote where offer_id = offers.id) as votes, 
 						        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted , 
@@ -218,7 +218,7 @@ class CustomerService extends Controller {
                                     left join merchant_store as store on store.id = offers.store_id
                                     left join merchant_store_address as address on address.store_id = store.id
                                     where users.id = ".$user_id."
-                                    "));
+                                    ORDER BY distance ASC"));
 
         return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers]);
 		 
