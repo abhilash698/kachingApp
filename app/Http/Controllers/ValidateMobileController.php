@@ -197,11 +197,12 @@ class ValidateMobileController extends Controller
             return response()->json(['response_code' => 'RES_ITK' , 'messages' => 'Invalid Token Key'],422);
         }
 
-        $check->delete();
 
         $user  = User::where('id',$check->user_id)->first();
         $user->password = bcrypt($input['new']);
         $user->save();
+
+        $check->delete();
 
         return response()->json(['response_code' => 'RES_PC' , 'message' => 'Password Changed']);
 
