@@ -13,7 +13,7 @@
  
 
 Route::get('/', function () {
-    return redirect('admin/login/');
+    return redirect('/login');
 });
 
 Route::get('/secret', 'Test@makeSuperAdmin'); 
@@ -86,53 +86,65 @@ Route::group(['prefix' => 'api/merchant/v1', 'middleware' => ['api:merchant']], 
 
 //  --------------------- Admin --------------------------------------------------------
 // Admin Authentication routes...
-Route::get('admin/login', 'Auth\AuthController@getLogin');
-Route::post('admin/login', 'Auth\AuthController@postLogin');
-Route::get('admin/logout', 'Auth\AuthController@getLogout');
-
+Route::get('/login', 'Auth\AuthController@getLogin');
+Route::post('/login', 'Auth\AuthController@postLogin');
+Route::get('/logout', 'Auth\AuthController@getLogout');
 // Registration routes...
-Route::get('admin/register', 'Auth\AuthController@getRegister');
-Route::post('admin/register', 'Auth\AuthController@postRegister');
-
-Route::get('admin/dashboard', 'Admin\AdminController@getDashboard');
-
-Route::get('admin/users/{status}', 'Admin\AdminController@getUsers');
-Route::get('admin/users/role/{type}', 'Admin\AdminController@getTypeUsers');
-Route::get('admin/user/{id}', 'Admin\AdminController@getSingleUser');
-Route::get('admin/user/{id}/edit', 'Admin\AdminController@getSingleUserEdit');
-Route::get('admin/user/{id}/addstore', 'Admin\AdminController@getAddStore');
-Route::get('admin/user/new/add', 'Admin\AdminController@getAddUser');
-Route::post('admin/user/update', 'Admin\AdminController@updateUser');
-Route::post('admin/user/new/add', 'Admin\AdminController@addUser');
-
-Route::get('admin/search/users', 'Admin\AdminController@searchUsers');
-Route::get('admin/search/stores', 'Admin\AdminController@searchStores');
-Route::get('admin/search/offers', 'Admin\AdminController@searchOffers');
+Route::get('register', 'Auth\AuthController@getRegister');
+Route::post('register', 'Auth\AuthController@postRegister');
 
 
-Route::post('admin/store/add', 'Admin\AdminController@addStore');
+Route::group(['prefix' => 'admin', 'middleware' => ['role:superAdmin']], function() {
+    Route::get('/dashboard', function () {
+        return redirect('/dashboard');
+    });
+    
+    Route::get('/dashboard', 'Admin\AdminController@getDashboard');
 
-Route::get('admin/stores/{type}', 'Admin\AdminController@getStores');
-Route::get('admin/stores/category/{id}', 'Admin\AdminController@getCategoryStores');
-Route::get('admin/store/{id}', 'Admin\AdminController@getSingleStore');
-Route::get('admin/store/{id}/offers/{period}', 'Admin\AdminController@getStoreOffers');
-Route::get('admin/store/{id}/edit', 'Admin\AdminController@getEditStore');
-Route::post('admin/store/update', 'Admin\AdminController@updateStore');
+    Route::get('/users/{status}', 'Admin\AdminController@getUsers');
+    Route::get('/users/role/{type}', 'Admin\AdminController@getTypeUsers');
+    Route::get('/user/{id}', 'Admin\AdminController@getSingleUser');
+    Route::get('/user/{id}/edit', 'Admin\AdminController@getSingleUserEdit');
+    Route::get('/user/{id}/addstore', 'Admin\AdminController@getAddStore');
+    Route::get('/user/new/add', 'Admin\AdminController@getAddUser');
+    Route::post('/user/update', 'Admin\AdminController@updateUser');
+    Route::post('/user/new/add', 'Admin\AdminController@addUser');
 
-Route::get('admin/store/{id}/addoffer', 'Admin\AdminController@getAddOffer');
-Route::post('admin/offer/add', 'Admin\AdminController@addOffer');
+    Route::get('/search/users', 'Admin\AdminController@searchUsers');
+    Route::get('/search/stores', 'Admin\AdminController@searchStores');
+    Route::get('/search/offers', 'Admin\AdminController@searchOffers');
 
-Route::get('admin/offers/{period}', 'Admin\AdminController@getOffers');
-Route::get('admin/offer/{id}', 'Admin\AdminController@getSingleOffer');
-Route::get('admin/offer/{id}/edit', 'Admin\AdminController@getEditOffer');
-Route::get('admin/offer/{id}/delete', 'Admin\AdminController@deleteOffer');
-Route::post('admin/offer/update', 'Admin\AdminController@updateOffer');
 
-Route::get('admin/elements', 'Admin\AdminController@getElements');
-Route::get('admin/element/add/{element}', 'Admin\AdminController@getAddElement');
-Route::get('admin/element/edit/{id}/{element}', 'Admin\AdminController@getEditElement');
-Route::post('admin/element/add/{element}', 'Admin\AdminController@addElement');
-Route::post('admin/element/edit/{element}', 'Admin\AdminController@editElement');
+    Route::post('/store/add', 'Admin\AdminController@addStore');
 
+    Route::get('/stores/{type}', 'Admin\AdminController@getStores');
+    Route::get('/stores/category/{id}', 'Admin\AdminController@getCategoryStores');
+    Route::get('/store/{id}', 'Admin\AdminController@getSingleStore');
+    Route::get('/store/{id}/offers/{period}', 'Admin\AdminController@getStoreOffers');
+    Route::get('/store/{id}/edit', 'Admin\AdminController@getEditStore');
+    Route::post('/store/update', 'Admin\AdminController@updateStore');
+
+    Route::get('/store/{id}/addoffer', 'Admin\AdminController@getAddOffer');
+    Route::post('/offer/add', 'Admin\AdminController@addOffer');
+
+    Route::get('/offers/{period}', 'Admin\AdminController@getOffers');
+    Route::get('/offer/{id}', 'Admin\AdminController@getSingleOffer');
+    Route::get('/offer/{id}/edit', 'Admin\AdminController@getEditOffer');
+    Route::get('/offer/{id}/delete', 'Admin\AdminController@deleteOffer');
+    Route::post('/offer/update', 'Admin\AdminController@updateOffer');
+
+    Route::get('/elements', 'Admin\AdminController@getElements');
+    Route::get('/element/add/{element}', 'Admin\AdminController@getAddElement');
+    Route::get('/element/edit/{id}/{element}', 'Admin\AdminController@getEditElement');
+    Route::post('/element/add/{element}', 'Admin\AdminController@addElement');
+    Route::post('/element/edit/{element}', 'Admin\AdminController@editElement');
+});
+
+Route::group(['prefix' => 'merchant', 'middleware' => ['role:merchant']], function() {
+    Route::get('/dashboard', 'Merchant\MerchantController@getDashboard');
+    Route::get('/profile', 'Merchant\MerchantController@getDashboard');
+    Route::get('/store', 'Merchant\MerchantController@getDashboard');
+
+});    
 
 
