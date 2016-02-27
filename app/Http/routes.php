@@ -35,6 +35,8 @@ Route::get('api/states', 'ElementService@getStates');
 Route::get('api/Countries', 'ElementService@getCountries');
 Route::get('api/appElements', 'ElementService@appElements');
 
+Route::get('api/allElements', 'ElementService@allElements');
+
 Route::group(['prefix' => 'api/customer/v1', 'middleware' => ['api:customer']], function() {
     Route::post('/tags', 'CustomerService@getTags'); 
     Route::post('/offers', 'CustomerService@getOffers');
@@ -75,7 +77,7 @@ Route::group(['prefix' => 'api/merchant/v1', 'middleware' => ['api:merchant']], 
     Route::post('/updated/validateOtp' , 'MerchantService@validateUpdatedMobileOtp');
     Route::post('/changepassword' , 'MerchantService@changePassword');
     Route::post('/mobile/update' , 'MerchantService@editMobile');
-});
+}); 
 
  
 
