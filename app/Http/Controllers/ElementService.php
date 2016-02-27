@@ -25,4 +25,9 @@ class ElementService extends Controller {
 	 	$AppElement = AppElement::find(1);
 	 	return response()->json(['response_code' => 'RES_SE' , 'messages' => 'App Elemets','data' => $AppElement ]);
 	 }
+
+	 public function allElements(){
+	 	$output = ['tags'=> Tag::get() , 'cities' => Cities::get() , 'states' => States::get() , 'countries' =>  Countries::get() , 'appElements' =>AppElement::find(1)  ];
+	 	return response()->json(['response_code' => 'RES_STS' , 'messages' => 'States' , 'data' => $output]);
+	 }
 }
