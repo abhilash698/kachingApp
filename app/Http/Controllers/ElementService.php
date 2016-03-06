@@ -5,6 +5,7 @@ use App\Cities;
 use App\Countries;
 use App\States;
 use App\AppElement;
+use App\Tag;
  
 
 class ElementService extends Controller {

@@ -13,7 +13,7 @@
  
 
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect('/merchant/login');
 });
 
 Route::get('/secret', 'Test@makeSuperAdmin'); 
@@ -92,8 +92,8 @@ Route::get('/login', 'Auth\AuthController@getLogin');
 Route::post('/login', 'Auth\AuthController@postLogin');
 Route::get('/logout', 'Auth\AuthController@getLogout');
 // Registration routes...
-Route::get('register', 'Auth\AuthController@getRegister');
-Route::post('register', 'Auth\AuthController@postRegister');
+/*Route::get('register', 'Auth\AuthController@getRegister');
+Route::post('register', 'Auth\AuthController@postRegister');*/
 
 
 Route::group(['prefix' => 'admin', 'middleware' => ['role:superAdmin']], function() {
@@ -106,6 +106,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:superAdmin']], functio
     Route::get('/users/{status}', 'Admin\AdminController@getUsers');
     Route::get('/users/role/{type}', 'Admin\AdminController@getTypeUsers');
     Route::get('/user/{id}', 'Admin\AdminController@getSingleUser');
+    Route::get('/user/{id}/delete', 'Admin\AdminController@deleteUser');
     Route::get('/user/{id}/edit', 'Admin\AdminController@getSingleUserEdit');
     Route::get('/user/{id}/addstore', 'Admin\AdminController@getAddStore');
     Route::get('/user/new/add', 'Admin\AdminController@getAddUser');
@@ -140,13 +141,31 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:superAdmin']], functio
     Route::get('/element/edit/{id}/{element}', 'Admin\AdminController@getEditElement');
     Route::post('/element/add/{element}', 'Admin\AdminController@addElement');
     Route::post('/element/edit/{element}', 'Admin\AdminController@editElement');
+    Route::get('/tag/{id}/delete', 'Admin\AdminController@deleteTag');
+
 });
+
+Route::get('merchant/login', 'Auth\AuthController@getMerchantLogin');
+Route::get('merchant/forgot/mobile', 'Merchant\MerchantController@getForgotMobile');
+Route::post('merchant/forgot/mobile', 'Merchant\MerchantController@postForgotMobile');
+Route::post('merchant/forgot/otp', 'Merchant\MerchantController@postForgotOtp');
+Route::post('merchant/forgot/changepassword', 'Merchant\MerchantController@postchangepassword');
 
 Route::group(['prefix' => 'merchant', 'middleware' => ['role:merchant']], function() {
     Route::get('/dashboard', 'Merchant\MerchantController@getDashboard');
-    Route::get('/profile', 'Merchant\MerchantController@getDashboard');
-    Route::get('/store', 'Merchant\MerchantController@getDashboard');
-
+    Route::post('/addOffer', 'Merchant\MerchantController@addOffer');
+    Route::post('/editOffer', 'Merchant\MerchantController@editOffer');
+    Route::post('/disableOffer', 'Merchant\MerchantController@disableOffer');
+    Route::get('/profile', 'Merchant\MerchantController@getProfile');
+    Route::get('/store', 'Merchant\MerchantController@getStore');
+    Route::get('/store/edit', 'Merchant\MerchantController@getEditStore');
+    Route::post('/store/edit', 'Merchant\MerchantController@editStore');
+    Route::get('/profile/edit', 'Merchant\MerchantController@getUserEdit');
+    Route::post('/profile/edit', 'Merchant\MerchantController@editUser');
+    Route::post('/profile/changepassword', 'Merchant\MerchantController@changePassword');
+    Route::post('/profile/sendOtp', 'Merchant\MerchantController@sendOtp');
+    Route::post('/profile/validateOtp', 'Merchant\MerchantController@validateOtp');
+    
 });    
 
 

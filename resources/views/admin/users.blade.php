@@ -70,7 +70,7 @@
                       <td class="v-align-middle">
                         <p>{{ $user->is_mobile_verified ? 'Active' : 'Inactive'}}<p>
                       </td>
-                      <td><a href="/admin/user/{{ $user->id }}/edit"><i class='fa fa-pencil-square-o'></i></a> &nbsp&nbsp<a href="/admin/user/{{ $user->id }}/addstore"><i class='fa fa-plus'></i></a></td>
+                      <td><a href="/admin/user/{{ $user->id }}/edit"><i class='fa fa-pencil-square-o'></i></a> &nbsp&nbsp<a href="/admin/user/{{ $user->id }}/delete" class='confirmation'><i class='fa fa-trash-o'></i></a> &nbsp&nbsp&nbsp<a href="/admin/user/{{ $user->id }}/addstore"><i class='fa fa-plus'></i></a></td>
                     </tr>
                     @endforeach
                     

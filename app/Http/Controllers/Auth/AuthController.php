@@ -23,7 +23,7 @@ use App\TempMobile;
 class AuthController extends Controller
 {
 
-    protected $loginPath = '/admin/login';
+    protected $loginPath = '/login';
 
     protected $redirectPath = '/admin/dashboard';
 
@@ -38,6 +38,24 @@ class AuthController extends Controller
         $this->middleware('guest', ['except' => 'getLogout']);
     }
 
+    
+
+    public function redirectPath()
+    {
+        // Logic that determines where to send the user
+        if ( Auth::user()->hasRole('superAdmin')) {
+            return '/admin/dashboard';
+        }
+
+        if ( Auth::user()->hasRole('merchant')) {
+            return '/merchant/dashboard';
+        }
+        
+
+        return '/alksfdj';
+    }
+
+    
     
     protected function validator(array $data)
     {
@@ -175,6 +193,11 @@ class AuthController extends Controller
         $jwt = JWT::encode($token, $key);
 
         return response()->json(['response_code' => 'TOKEN' , 'data' => $jwt ]);
+    }
+
+    public function getMerchantLogin()
+    {
+        return view('merchant.login');
     }
 
     public function googleLogin(Request $request){
@@ -359,7 +382,7 @@ class AuthController extends Controller
         $credentials = $this->getCredentials($request);
 
         if (Auth::attempt($credentials, $request->has('remember'))) {
-            if(Auth::user()->hasRole(['admin','superAdmin']) && Auth::user()->status){
+            if(Auth::user()->hasRole(['admin','superAdmin','merchant']) && Auth::user()->status){
                 return $this->handleUserWasAuthenticated($request, $throttles);
             }
             /*Auth::user()->roles()->attach(4);*/

@@ -171,7 +171,9 @@ class MerchantService extends Controller {
 			$image = $request->file('logo');
 	        $imageName = strtotime(Carbon::now()).md5($store->id).'.'. $image->getClientOriginalExtension();
 	        $path = public_path('assets/img/stores/'.$imageName);
-	        Image::make($image->getRealPath())->resize(280,240)->save($path);
+	        Image::make($image->getRealPath())->resize(280, null, function ($constraint) {
+														    $constraint->aspectRatio();
+														})->save($path);
 	        $store->logoUrl = $imageName;
 	    }
 
@@ -200,7 +202,9 @@ class MerchantService extends Controller {
 			$image = $request->file('logo');
 	        $imageName = strtotime(Carbon::now()).md5($store_id['store_id']).'.'. $image->getClientOriginalExtension();
 	        $path = public_path('assets/img/stores/'.$imageName);
-	        Image::make($image->getRealPath())->resize(280,240)->save($path);
+	        Image::make($image->getRealPath())->resize(280, null, function ($constraint) {
+														    $constraint->aspectRatio();
+														})->save($path);
 	        $store->logoUrl = $imageName;
 	    }
 

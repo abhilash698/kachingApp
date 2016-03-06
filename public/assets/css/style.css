@@ -83,3 +83,7 @@
 	color: #fff;
 	margin-left: 4px !important;
 }
+.panel-heading a{
+	opacity: 1;
+}
+

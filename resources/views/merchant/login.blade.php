@@ -1,4 +1,4 @@
-@extends('auth.layouts.authentication')
+@extends('merchant.layouts.authentication')
 
 @section('content')
 
@@ -7,12 +7,12 @@
       <!-- START Login Background Pic Wrapper-->
       <div class="bg-pic">
         <!-- START Background Pic-->
-        {!! Html::image('assets/img/custom/login-side.jpg', '' , array('class' => 'lazy')) !!}
+        {!! Html::image('http://ingenuityuk.com/wp-content/uploads/2014/12/ingenuity_146275016.jpg', '' , array('class' => 'lazy')) !!}
          <!-- END Background Pic-->
         <!-- START Background Caption-->
         <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
           <h2 class="semi-bold text-white">
-					#StartDealing - Kaching Admin Dashboard</h2>
+					#StartDealing - Kaching Merchant Dashboard</h2>
           <p class="small">
             All Rights Reserved. Kaching Corporation</p>
         </div>
@@ -42,6 +42,7 @@
                 <input type="password" class="form-control" name="password" placeholder="Credentials" required>
               </div>
             </div>
+            <a href="/merchant/forgot/mobile">Forgot Password</a>
             <!-- START Form Control-->
             <div class="row">
               <div class="col-md-6 no-padding">

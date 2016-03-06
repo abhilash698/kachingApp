@@ -864,9 +864,14 @@ body.dashboard .page-container {
 .page-title {
   margin-top: 0px;
 }
+
+.login-wrapper .bg-pic > img{
+  opacity: 0.9 !important;
+}
 /* Breadcrumbs
 ------------------------------------
 */
+
 .breadcrumb {
   font-family: 'Montserrat';
   -webkit-border-radius: 0px;

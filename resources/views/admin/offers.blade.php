@@ -15,8 +15,8 @@
                 <div class="btn-toolbar m-t-10" role="toolbar">
                   <div class="btn-group">
                     <a href="/admin/offers/today"><button type="button" class="btn btn-default">Active</button></a>
-                    <a href="/admin/offers/past"><button type="button" class="btn btn-default">Up Comming</button></a>
-                    <a href="/admin/offers/future"><button type="button" class="btn btn-default">Expired</button></a>
+                    <a href="/admin/offers/future"><button type="button" class="btn btn-default">Up Comming</button></a>
+                    <a href="/admin/offers/past"><button type="button" class="btn btn-default">Expired</button></a>
                   </div>
                 </div>
               </div>

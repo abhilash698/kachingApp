@@ -214,7 +214,7 @@
                 <!-- <li><a href="#"><i class="pg-settings_small"></i> Settings</a>
                 </li> -->
                 <li class="bg-master-lighter">
-                  <a href="/admin/logout" class="clearfix">
+                  <a href="/logout" class="clearfix">
                     <span class="pull-left">Logout</span>
                     <span class="pull-right"><i class="pg-power"></i></span>
                   </a>
@@ -266,6 +266,16 @@
     <!-- BEGIN PAGE LEVEL JS -->
     {!! Html::script('assets/js/scripts.js') !!} 
     <!-- END PAGE LEVEL JS -->
+
+    <script type="text/javascript">
+        var elems = document.getElementsByClassName('confirmation');
+        var confirmIt = function (e) {
+            if (!confirm('Are you sure you want to delete?')) e.preventDefault();
+        };
+        for (var i = 0, l = elems.length; i < l; i++) {
+            elems[i].addEventListener('click', confirmIt, false);
+        }
+    </script>
     
   </body>
 </html>

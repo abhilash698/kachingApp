@@ -57,7 +57,7 @@
 	                          <tr>
 	                            <td class="v-align-middle">{{ $tag->id }}</td>
 	                            <td class="v-align-middle semi-bold">{{ $tag->title }}</td>
-	                            <td class="v-align-middle "><a href="/admin/element/edit/{{ $tag->id }}/tag"><i class='fa fa-pencil-square-o'></i></a><!--  &nbsp&nbsp<a href="/admin/tag/{{ $tag->id }}/delete"><i class='fa fa-trash'></i></a> --></td>
+	                            <td class="v-align-middle "><a href="/admin/element/edit/{{ $tag->id }}/tag"><i class='fa fa-pencil-square-o'></i></a> &nbsp&nbsp<a href="/admin/tag/{{ $tag->id }}/delete" class='confirmation'><i class='fa fa-trash-o'></i></a></td>
 	                          </tr>
 	                        @endforeach 
 	                        </tbody>

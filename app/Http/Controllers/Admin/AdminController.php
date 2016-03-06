@@ -291,13 +291,13 @@ class AdminController extends Controller
 	public function getUsers(request $request,$status){
 		
 		if ($status == 'active') {
-			$users  = User::with('roles')->where('status',true)->paginate(15);
+			$users  = User::with('roles')->where('status',true)->orderby('id','DESC')->paginate(15);
 		}
 		elseif($status == 'inactive'){
-			$users  = User::with('roles')->where('status',false)->paginate(15);
+			$users  = User::with('roles')->where('status',false)->orderby('id','DESC')->paginate(15);
 		}
 		else{
-			$users = User::with('roles')->paginate(15);
+			$users = User::with('roles')->orderby('id','DESC')->paginate(15);
 		}
 
 		$output = array('users' => $users);
@@ -308,7 +308,7 @@ class AdminController extends Controller
 	public function getTypeUsers(request $request,$type){
 		$users = User::whereHas('roles' , function($q) use ($type){
 				    $q->where('name', $type);
-				})->paginate(15);
+				})->orderby('id','DESC')->paginate(15);
 
 		$output = array('users' => $users);
 		
@@ -452,7 +452,9 @@ class AdminController extends Controller
         $image = $request->file('logo');
         $imageName = strtotime(Carbon::now()).md5($store->id).'.'. $image->getClientOriginalExtension();
         $path = public_path('assets/img/stores/'.$imageName);
-        Image::make($image->getRealPath())->resize(280,240)->save($path);
+        Image::make($image->getRealPath())->resize(280, null, function ($constraint) {
+														    $constraint->aspectRatio();
+														})->save($path);
 		
 		$store->logoUrl = $imageName;
 		$store->save();
@@ -472,6 +474,7 @@ class AdminController extends Controller
 				$query->where('startDate' , '>=' , $now );
 			}])
 			->where('status',true)
+			->orderby('id','DESC')
 			->paginate(10);
 		}
 		elseif($type == 'inactive'){
@@ -479,12 +482,14 @@ class AdminController extends Controller
 				$query->where('startDate' , '>=' , $now );
 			}])
 			->where('status',false)
+			->orderby('id','DESC')
 			->paginate(10);
 		}
 		else{
 			$stores = MerchantStore::with(['Address','tags','Merchant','Offers'=> function ($query) use($now){
 				$query->where('startDate' , '>=' , $now );
 			}])
+			->orderby('id','DESC')
 			->paginate(10);
 		}
 		
@@ -496,7 +501,7 @@ class AdminController extends Controller
 	public function getCategoryStores($id){
 		$stores = MerchantStore::whereHas('Tags', function ($query) use ($id){
 		    $query->where('id',$id);
-		})->with(['Address','Tags','Merchant','Offers'])->paginate(10);
+		})->with(['Address','Tags','Merchant','Offers'])->orderby('id','DESC')->paginate(10);
 
 		$output['stores'] = $stores;
 		return view('admin.stores',$output);
@@ -561,7 +566,9 @@ class AdminController extends Controller
 			$image = $request->file('logo');
 	        $imageName = strtotime(Carbon::now()).md5($input['store_id']).'.'. $image->getClientOriginalExtension();
 	        $path = public_path('assets/img/stores/'.$imageName);
-	        Image::make($image->getRealPath())->resize(280,240)->save($path);
+	        Image::make($image->getRealPath())->resize(280, null, function ($constraint) {
+														    $constraint->aspectRatio();
+														})->save($path);
 	        $store->logoUrl = $imageName;
 	    }
 
@@ -732,6 +739,20 @@ class AdminController extends Controller
 		$offer->delete();
 
 		return redirect('admin/offers/all');
+	}
+
+	public function deleteUser($id){
+		$user = User::where('id',$id)->first();
+		$user->delete();
+
+		return redirect('admin/users/all');
+	}
+
+	public function deleteTag($id){
+		$tag = Tag::where('id',$id)->first();
+		$tag->delete();
+
+		return redirect('admin/elements');
 	}
 
 	public function getSingleOffer($id){

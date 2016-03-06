@@ -59,7 +59,7 @@ class User extends Model implements AuthenticatableContract,
     }
 
     public function Stores(){
-        return $this->hasMany('App\MerchantStore','user_id');
+        return $this->hasOne('App\MerchantStore','user_id');
     }
     
 }

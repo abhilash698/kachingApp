@@ -6,6 +6,10 @@
         // Initializes search overlay plugin.
         // Replace onSearchSubmit() and onKeyEnter() with 
         // your logic to perform a search and display results
+
+        // flip card initialize added 26-02-16 by abhilash
+        $(".card").flip();
+
         $(".list-view-wrapper").scrollbar();
 
         $('[data-pages="search"]').search({

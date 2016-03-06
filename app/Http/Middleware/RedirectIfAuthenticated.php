@@ -35,7 +35,15 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next)
     {
         if ($this->auth->check()) {
-            return redirect('/admin/dashboard');
+
+            if ($this->auth->user()->hasRole('superAdmin')) {
+                return redirect('/admin/dashboard');
+            }
+
+            if ( $this->auth->user()->hasRole('merchant')) {
+                return redirect('/merchant/dashboard');
+            }
+            return redirect('/home');
         }
 
         return $next($request);
