@@ -28,11 +28,11 @@ class MerchantService extends Controller {
 
     protected function checkUserHasStore($store_id,$checkStatus){
     	$hasStore = false;
-    	foreach (Auth::user()->stores as $store) {
-			if($store_id == $store->id){
-				$hasStore = true;
-			}
+    	$storeId = Auth::user()->stores->id;
+		if($store_id == $storeId){
+			$hasStore = true;
 		}
+		
 
 		if($checkStatus){
 			$store = MerchantStore::where('id',$store_id)->first();
