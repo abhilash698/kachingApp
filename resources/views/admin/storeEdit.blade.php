@@ -106,43 +106,43 @@
                       <p class="m-t-10">Store Address </p>
                       <div class="form-group form-group-default required">
                         <label>Street <span class='error-msg'>{{ $errors->first('street') }}</span></label>
-                        <input type="text" class="form-control" value='{{$store->address->street }}' name="street" required>
+                        <input type="text" class="form-control" value='@if(isset($store->Address)){{$store->address->street }} @endif' name="street" required>
                       </div>
                       <span class='error-msg'>{{ $errors->first('city_id') }}</span>
                       <select class="cs-select cs-skin-slide" name='city_id' data-init-plugin="cs-select">
                         @foreach($cities as $city)
-                        <option @if( $store->city_id == $city->id)  {{ 'selected' }} @endif value="{{$city->id}}">{{$city->title}}</option>
+                        <option  @if(isset($store->Address) && $store->address->city_id == $city->id)  {{ 'selected' }} @endif value="{{$city->id}}">{{$city->title}}</option>
                         @endforeach
                       </select>
 
                       <span class='error-msg'>{{ $errors->first('state_id') }}</span>
                       <select class="cs-select cs-skin-slide" name='state_id' data-init-plugin="cs-select">
                         @foreach($states as $state)
-                        <option @if($store->state_id == $state->id) {{ 'selected' }} @endif value="{{$state->id}}">{{$state->title}}</option>
+                        <option @if(isset($store->Address) && $store->address->state_id == $state->id) {{ 'selected' }} @endif value="{{$state->id}}">{{$state->title}}</option>
                         @endforeach
                       </select>
 
                       <span class='error-msg'>{{ $errors->first('country_id') }}</span>
                       <select class="cs-select cs-skin-slide" name='country_id' data-init-plugin="cs-select">
                         @foreach($countries as $country)
-                        <option @if($store->country_id == $country->id) {{ 'selected' }} @endif value="{{$country->id}}">{{$country->title}}</option>
+                        <option @if(isset($store->Address) && $store->address->country_id == $country->id) {{ 'selected' }} @endif value="{{$country->id}}">{{$country->title}}</option>
                         @endforeach
                       </select>
 
                       <br>
                       <div class="form-group form-group-default required">
                         <label>Pincode <span class='error-msg'>{{ $errors->first('pincode') }}</span></label>
-                        <input type="text" class="form-control" value='{{$store->address->pincode }}' name="pincode" required>
+                        <input type="text" class="form-control" value='@if(isset($store->Address)){{$store->address->pincode }}@endif' name="pincode" required>
                       </div>
 
                       <div class="form-group form-group-default required">
                         <label>Latitude <span class='error-msg'>{{ $errors->first('latitude') }}</span></label>
-                        <input type="text" class="form-control" value='{{$store->address->latitude }}' name="latitude" required>
+                        <input type="text" class="form-control" value='@if(isset($store->Address)){{$store->address->latitude }}@endif' name="latitude" required>
                       </div>
 
                       <div class="form-group form-group-default required">
                         <label>Longitude <span class='error-msg'>{{ $errors->first('longitude') }}</span></label>
-                        <input type="text" class="form-control" value='{{$store->address->longitude }}' name="longitude" required>
+                        <input type="text" class="form-control" value='@if(isset($store->Address)){{$store->address->longitude }}@endif' name="longitude" required>
                       </div>
                        
                        
