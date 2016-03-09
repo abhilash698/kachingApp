@@ -140,4 +140,27 @@ $(document).ready(function() {
 	    });
 
 	});
+
+    $('#submitAdd').click(function(){
+		$('.loading-add').css('display','block');
+		$.post("/merchant/addOffer",
+	    {
+	        _token: $('#modalSlideUp :input[name=token]').val(),
+	        title: $('#modalSlideUp :input[name=title]').val(),
+	        startDate: $('#modalSlideUp :input[name=startDate]').val(),
+	        endDate: $('#modalSlideUp :input[name=endDate]').val(),
+	        fineprint: $('#modalSlideUp :input[name=fineprint]').val()
+	    },
+	    function(data, status){
+	        if(data.status == 'fail'){
+	        	$('.loading-add').css('display','none');
+	        	$('#errorMsgAdd').text(data.message);
+	        	//alert(data.message);
+	        }
+	        else {
+	        	location.reload();
+	        }
+	    });
+
+	});
 });

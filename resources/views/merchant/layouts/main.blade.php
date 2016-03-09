@@ -27,12 +27,9 @@
     {!! Html::style('assets/css/jquery.datetimepicker.css') !!}
     {!! Html::style('assets/css/merchant.css') !!}
 
-    {!! Html::script('assets/plugins/jquery/jquery-1.11.1.min.js') !!} 
-    {!! Html::script('assets/plugins/jquery-ui/jquery-ui.min.js') !!} 
     <!--[if lte IE 9]>
         <link href="pages/css/ie9.css" rel="stylesheet" type="text/css" />
     <![endif]-->
-    <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
     
     <script type="text/javascript">
     window.onload = function()
@@ -91,7 +88,14 @@
             <a href="/merchant/store" class="detailed">
               <span class="title">Store</span>
             </a>
-            <span class="icon-thumbnail "><i class="pg-mail"></i></span>
+            <span class="icon-thumbnail "><i class="fa fa-building-o"></i></span>
+          </li>
+
+          <li class="">
+            <a href="/merchant/profile/edit" class="detailed">
+              <span class="title">Profile</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-user"></i></span>
           </li>
           
         </ul>
@@ -132,52 +136,53 @@
     <!-- Modal -->
     <div class="modal fade slide-up disable-scroll" id="modalSlideUp" tabindex="-1" role="dialog" aria-hidden="false">
       <div class="modal-dialog ">
-        <div class="modal-content-wrapper"  ng-app="addOffer" ng-controller="addController" >
+        <div class="modal-content-wrapper">
           <div class="modal-content">
-            <div class="loading-spiner-holder" loading ><div class="loading-spiner"><img src="/assets/img/custom/loader.gif" /></div></div>
+            <div class="loading-spiner-holder loading-add" ><div class="loading-spiner"><img src="/assets/img/custom/loader.gif" /></div></div>
             <div class="modal-header clearfix text-left">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
               </button>
               <h5>Add <span class="semi-bold">Offer</span></h5>
+              <p style='color:red; ' id='errorMsgAdd'></p>
             </div>
             <div class="modal-body">
-              <form role="form" name="offerForm" ng-submit="submitForm()">
+              <form role="form" name="offerForm" >
                 <div class="form-group-attached">
                   <div class="row">
                     <div class="col-sm-12">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}" ng-model="offer.csrf">
+                      <input type="hidden" name="token" value="{{ csrf_token() }}">
                       <div class="form-group form-group-default">
-                        <label>Offer Title <span ng-show="errorTitle"><% errorTitle %></span></label></label>
-                        <input type="text" name="title" class="form-control" ng-model="offer.title" required>
+                        <label>Offer Title </label>
+                        <input type="text" name="title" class="form-control" required>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group form-group-default">
-                        <label>Start Time <span ng-show="errorStartDate"><% errorStartDate %></span></label>
-                        <input type="text"  name="startDate" class="form-control datetimepicker" ng-model="offer.startDate" required>
+                        <label>Start Time</label>
+                        <input type="text"  name="startDate" class="form-control datetimepicker" required>
                       </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group form-group-default">
-                        <label>End Time <span ng-show="errorEndDate"><% errorEndDate %></span></label>
-                        <input type="text" name="endDate" class="form-control datetimepicker" ng-model="offer.endDate" required>
+                        <label>End Time </label>
+                        <input type="text" name="endDate" class="form-control datetimepicker" required>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-sm-12">
                       <div class="form-group form-group-default">
-                        <label>Fineprint <span ng-show="errorFineprint"><% errorFineprint %></span></label>
-                        <textarea name='fineprint' style="width:100%; height: 100px;" ng-model="offer.fineprint" required></textarea>
+                        <label>Fineprint </label>
+                        <textarea name='fineprint' style="width:100%; height: 100px;" required></textarea>
                       </div>
                     </div>
                   </div>
                 </div>
               <div class="row"> 
                 <div class="col-sm-2 col-sm-offset-10 m-t-10 sm-m-t-10">
-                  <button type="submit" ng-disabled="isDisabled" ng-click="disableButton()" class="btn btn-primary btn-block m-t-5">Add</button>
+                  <button type="button" id='submitAdd' class="btn btn-primary btn-block m-t-5">Add</button>
                 </div>
               </div>
               </form>
@@ -223,7 +228,7 @@
                 <div class="row">
                   <div class="col-sm-12">
                     <div class="form-group form-group-default">
-                      <label>Offer Title</label></label>
+                      <label>Offer Title</label>
                       <input type="text" name="title" class="form-control" required>
                     </div>
                   </div>
@@ -546,6 +551,8 @@
     <!-- END OVERLAY -->
     <!-- BEGIN VENDOR JS -->
 
+    {!! Html::script('assets/plugins/jquery/jquery-1.11.1.min.js') !!} 
+    {!! Html::script('assets/plugins/jquery-ui/jquery-ui.min.js') !!} 
     {!! Html::script('assets/plugins/pace/pace.min.js') !!} 
     
     {!! Html::script('assets/plugins/modernizr.custom.js') !!} 
@@ -588,7 +595,6 @@
       });
     </script>
 
-    {!! Html::script('assets/js/angular.js') !!} 
     {!! Html::script('assets/js/custom.js') !!} 
 
     <!-- END PAGE LEVEL JS -->

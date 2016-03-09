@@ -23,7 +23,7 @@ use App\TempMobile;
 class AuthController extends Controller
 {
 
-    protected $loginPath = '/login';
+    protected $loginPath = '/merchant/login';
 
     protected $redirectPath = '/admin/dashboard';
 

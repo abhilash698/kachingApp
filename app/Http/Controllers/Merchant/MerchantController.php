@@ -173,11 +173,7 @@ class MerchantController extends Controller
 		$validator = $this->customValidator($request->all(), $rules, array());
 		
 		if($validator->fails()){
-			 return  response()-> json(array(
-			        'success' => false,
-			        'errors' => $validator->getMessageBag()->toArray()
-
-			    ), 400); // 400 being the HTTP code for an invalid request.
+			 return response()->json(['status'=>'fail' ,'message' =>  $validator->errors()->all()]); 
 		}
 
 		$fineprintArr  = explode("\n",$request->input('fineprint'));
@@ -196,7 +192,7 @@ class MerchantController extends Controller
 
 		$offer = Offers::create($offerInput);
 		
-		return response()->json(['response_code' => 'RES_SOC' , 'messages' => 'Store Offer Created','data' =>$offer]);
+		return response()->json(['status'=>'success']);
 	}
 
 	public function disableOffer(request $request){

@@ -91,6 +91,9 @@
 .loading-spiner{
 	text-align: center;
 }
+.loading-add{
+	display: none;
+}
 
 /* Paste this css to your style sheet file or under head tag */
 /* This only works with JavaScript, 
