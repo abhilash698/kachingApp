@@ -17,6 +17,7 @@ use App\Countries;
 use App\TempMobile;
 use App\UserSmsCode;
 use App\PasswordOtpReset;
+use App\AppElement;
 use Hash;
 use App\MerchantStoreAddress;
 use Image;
@@ -154,12 +155,16 @@ class MerchantController extends Controller
 		return view('merchant.dashboard',$output);
 	}
 
-	public function getAddStore(){
-
+	public function getAbout(){
+		$AppElement = AppElement::find(1);
+		$output['about'] = $AppElement->mabout;
+		return view('merchant.about',$output);
 	}
 
-	public function addStore(request $request){
-
+	public function getService(request $request){
+		$AppElement = AppElement::find(1);
+		$output['support'] = $AppElement->msupport;
+		return view('merchant.support',$output);
 	}
 
 	public function addOffer(request $request){

@@ -157,6 +157,9 @@ Route::group(['prefix' => 'merchant', 'middleware' => ['role:merchant']], functi
     Route::post('/editOffer', 'Merchant\MerchantController@editOffer');
     Route::post('/disableOffer', 'Merchant\MerchantController@disableOffer');
     Route::get('/profile', 'Merchant\MerchantController@getProfile');
+    Route::get('/about', 'Merchant\MerchantController@getAbout');
+    Route::get('/support', 'Merchant\MerchantController@getService');
+
     Route::get('/store', 'Merchant\MerchantController@getStore');
     Route::get('/store/edit', 'Merchant\MerchantController@getEditStore');
     Route::post('/store/edit', 'Merchant\MerchantController@editStore');

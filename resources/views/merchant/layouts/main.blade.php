@@ -386,9 +386,9 @@
               <ul class="dropdown-menu profile-dropdown" role="menu">
                 <li><a href="/merchant/profile/edit"><i class="pg-settings_small"></i> Profile</a>
                 </li>
-                <li><a href="#"><i class="pg-outdent"></i> about</a>
+                <li><a href="/merchant/about"><i class="pg-outdent"></i> about</a>
                 </li>
-                <li><a href="#"><i class="pg-signals"></i> service</a>
+                <li><a href="/merchant/support"><i class="pg-signals"></i> service</a>
                 </li>
                 <li class="bg-master-lighter">
                   <a href="/logout" class="clearfix">
