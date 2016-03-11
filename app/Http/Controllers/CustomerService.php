@@ -163,13 +163,13 @@ class CustomerService extends Controller {
 			$offer = Offers::find($input['offer_id']);
 			$offer->Favourites()->detach([$user_id]);
 
-			return response()->json([ 'response_code' => 'ERR_FR' , 'messages' => 'Favourite Removed' ]);
+			return response()->json([ 'response_code' => 'ERR_FR' , 'messages' => 'Favorite Removed' ]);
 		}
 		
 		$offer = Offers::find($input['offer_id']);
 		$offer->Favourites()->attach([$user_id]);
 
-		return response()->json(['response_code' => 'RES_OMF' , 'messages' => 'Offer Made favourite']);
+		return response()->json(['response_code' => 'RES_DF' , 'messages' => 'Deal Favorited']);
 	}
 
 	public function makeVote(request $request){
@@ -188,13 +188,13 @@ class CustomerService extends Controller {
 			$offer = Offers::find($offer_id);
 			/*$offer->Votes()->updateExistingPivot($user_id,['status'=>$input['status']]);*/
 			$offer->Votes()->detach([$user_id]);;
-			return response()->json([ 'response_code' => 'ERR_OVR' , 'messages' => 'Offer Vote Removed' ]);
+			return response()->json([ 'response_code' => 'ERR_KDD' , 'messages' => 'Kaching! Deal Downvoted' ]);
 		}
 
 		$offer = Offers::find($offer_id);
 		$offer->Votes()->attach([$user_id]); 
 
-		return response()->json(['response_code' => 'RES_OMF' , 'messages' => 'Offer Voted']);
+		return response()->json(['response_code' => 'RES_KDU' , 'messages' => 'Kaching! Deal Upvoted']);
 
 	}
 
