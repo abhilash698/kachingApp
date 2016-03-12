@@ -153,8 +153,21 @@ class CustomerService extends Controller {
 	}
 
 	public function searchOffers(request $request){
+		$rules = array(
+			'latitude' => 'required',
+			'longitude' => 'required'
+			);
+		$Validator = $this->customValidator($request->all(), $rules, array());
+		
+		if($Validator->fails()){
+			return response()->json([ 'response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
+		}
+
+		$now =  Carbon::now();
 		$keyword = $request->input('q');
-		if (empty($keyword)) {
+		$location = $request->only('latitude','longitude');
+        $user_id = Auth::user()->id;
+		if (!empty($keyword)) {
 			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
@@ -169,12 +182,12 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."' AND offers.title LIKE %".$keyword."% 
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."' AND offers.title LIKE '%".$keyword."%'
 			        	ORDER BY distance ASC;"
 		        	));
 		}
 		else{
-            return response()->json(['response_code' => 'RES_EQS' , 'messages' => 'Empty Query String'],404);
+            return response()->json(['response_code' => 'RES_EQS' , 'messages' => 'Empty Query String'],400);
 		}
 
 		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers]);

@@ -40,6 +40,7 @@ Route::get('api/allElements', 'ElementService@allElements');
 Route::group(['prefix' => 'api/customer/v1', 'middleware' => ['api:customer']], function() {
     Route::post('/tags', 'CustomerService@getTags'); 
     Route::post('/offers', 'CustomerService@getOffers');
+    Route::post('/offers/search', 'CustomerService@searchOffers');
     Route::post('/favourite','CustomerService@makeFavoutite');
     Route::post('/vote','CustomerService@makeVote');
     Route::post('/favOffers','CustomerService@userFavOffers');
