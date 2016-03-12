@@ -90,6 +90,16 @@ class CustomerService extends Controller {
 	}
 
 	public function getOffers(request $request){
+		$rules = array(
+			'latitude' => 'required',
+			'longitude' => 'required'
+			);
+		$Validator = $this->customValidator($request->all(), $rules, array());
+		
+		if($Validator->fails()){
+			return response()->json([ 'response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
+		}
+
 		$now =  Carbon::now();
 		$location = $request->only('latitude','longitude');
         $user_id = Auth::user()->id;
@@ -109,7 +119,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= ".$now." AND offers.endDate >= ".$now."
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."'
 			        	ORDER BY distance ASC;"
 		        	));
 		}
@@ -132,7 +142,7 @@ class CustomerService extends Controller {
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
 			        	left join tag_store on tag_store.store_id = offers.store_id and tag_store.tag_id IN (".$input['tags'].")
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= ".$now." AND offers.endDate >= ".$now."
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."'
 			        	ORDER BY distance ASC;"
 		        	));
 			
@@ -159,7 +169,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= ".$now." AND offers.endDate >= ".$now." AND offers.title LIKE %".$keyword."% 
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."' AND offers.title LIKE %".$keyword."% 
 			        	ORDER BY distance ASC;"
 		        	));
 		}
