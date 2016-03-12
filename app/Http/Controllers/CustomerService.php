@@ -141,7 +141,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	left join tag_store on tag_store.store_id = offers.store_id and tag_store.tag_id IN (".$input['tags'].")
+			        	right join tag_store on tag_store.store_id = offers.store_id and tag_store.tag_id IN (".$input['tags'].")
 			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."'
 			        	ORDER BY distance ASC;"
 		        	));
