@@ -1,8 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 use Carbon\Carbon;
-
-
 use App\Tag;
 use App\User;
 use App\Offers;
@@ -75,8 +73,8 @@ class CustomerService extends Controller {
             $previousSms->delete();
         }
 
-    	$otp = rand(100000, 999999);
-        $sms = Curl::to('https://control.msg91.com/api/sendhttp.php?authkey=101670ALSycXxv0ZZX56920dcd&mobiles='.$user->mobile.',8801709993&message=Kaching%20Mobile%20Verification%20Code%20'.$otp.'&sender=777777&route=1')
+    	$otp = rand(10000, 99999);
+        $sms = Curl::to('https://control.msg91.com/api/sendhttp.php?authkey=101670ALSycXxv0ZZX56920dcd&mobiles='.$user->mobile.'&message=Kaching%20Mobile%20Verification%20Code%20'.$otp.'&sender=KACHIN&route=4')
         ->get();
          
 
@@ -92,6 +90,7 @@ class CustomerService extends Controller {
 	}
 
 	public function getOffers(request $request){
+		$now =  Carbon::now();
 		$location = $request->only('latitude','longitude');
         $user_id = Auth::user()->id;
 		$input = $request->only('tags');
@@ -110,7 +109,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= ".$now." AND offers.endDate >= ".$now."
 			        	ORDER BY distance ASC;"
 		        	));
 		}
@@ -133,11 +132,39 @@ class CustomerService extends Controller {
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
 			        	left join tag_store on tag_store.store_id = offers.store_id and tag_store.tag_id IN (".$input['tags'].")
-			        	where offers.status = 1 AND offers.deleted_at IS NULL
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= ".$now." AND offers.endDate >= ".$now."
 			        	ORDER BY distance ASC;"
 		        	));
 			
 			 
+		}
+
+		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers]);
+	}
+
+	public function searchOffers(request $request){
+		$keyword = $request->input('q');
+		if (empty($keyword)) {
+			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.cost_two,address.latitude,address.longitude,merchant.name, 
+			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
+			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
+			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
+			        	(select GROUP_CONCAT(tag_id SEPARATOR ',') FROM tag_store where store_id=offers.store_id GROUP BY store_id) as tags,
+			        	(((acos(sin((".$location['latitude']."*pi()/180)) * 
+				            sin((`Latitude`*pi()/180))+cos((".$location['latitude']."*pi()/180)) * 
+				            cos((`Latitude`*pi()/180)) * cos(((".$location['longitude']."- `Longitude`)* 
+				            pi()/180))))*180/pi())*60*1.1515
+				        ) as distance  
+			        	from offers  
+			        	left join merchant_store as store on store.id = offers.store_id 
+			        	left join users as merchant on merchant.id = store.user_id 
+			        	left join merchant_store_address as address on address.store_id = offers.store_id
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= ".$now." AND offers.endDate >= ".$now." AND offers.title LIKE %".$keyword."% 
+			        	ORDER BY distance ASC;"
+		        	));
+		}
+		else{
+            return response()->json(['response_code' => 'RES_EQS' , 'messages' => 'Empty Query String'],404);
 		}
 
 		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers]);
