@@ -182,7 +182,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."' AND offers.title LIKE '%".$keyword."%'
+			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."' AND ( offers.title LIKE '%".$keyword."%' OR store.store_name LIKE '%".$keyword."%')
 			        	ORDER BY distance ASC;"
 		        	));
 		}
