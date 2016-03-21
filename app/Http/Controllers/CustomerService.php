@@ -100,6 +100,13 @@ class CustomerService extends Controller {
 			return response()->json([ 'response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
 		}
 
+		if(!empty($request->input('veg'))){
+			$veg = ' AND store.veg = '.$request->input('veg');
+		}
+		else{
+			$veg = '';
+		}
+
 		$now =  Carbon::now();
 		$location = $request->only('latitude','longitude');
         $user_id = Auth::user()->id;
@@ -119,7 +126,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."'
+			        	where offers.status = 1 AND offers.deleted_at IS NULL ".$veg." AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."'
 			        	ORDER BY distance ASC;"
 		        	));
 		}
@@ -142,7 +149,7 @@ class CustomerService extends Controller {
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
 			        	right join tag_store on tag_store.store_id = offers.store_id and tag_store.tag_id IN (".$input['tags'].")
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."'
+			        	where offers.status = 1 AND offers.deleted_at IS NULL ".$veg." AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."'
 			        	ORDER BY distance ASC;"
 		        	));
 			
@@ -163,6 +170,14 @@ class CustomerService extends Controller {
 			return response()->json([ 'response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
 		}
 
+		if(!empty($request->input('veg'))){
+			$veg = ' AND store.veg = '.$request->input('veg');
+		}
+		else{
+			$veg = '';
+		}
+
+
 		$now =  Carbon::now();
 		$keyword = $request->input('q');
 		$location = $request->only('latitude','longitude');
@@ -182,7 +197,7 @@ class CustomerService extends Controller {
 			        	left join merchant_store as store on store.id = offers.store_id 
 			        	left join users as merchant on merchant.id = store.user_id 
 			        	left join merchant_store_address as address on address.store_id = offers.store_id
-			        	where offers.status = 1 AND offers.deleted_at IS NULL AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."' AND ( offers.title LIKE '%".$keyword."%' OR store.store_name LIKE '%".$keyword."%')
+			        	where offers.status = 1 AND offers.deleted_at IS NULL ".$veg." AND offers.startDate <= '".$now."' AND offers.endDate >= '".$now."' AND ( offers.title LIKE '%".$keyword."%' OR store.store_name LIKE '%".$keyword."%')
 			        	ORDER BY distance ASC;"
 		        	));
 		}
