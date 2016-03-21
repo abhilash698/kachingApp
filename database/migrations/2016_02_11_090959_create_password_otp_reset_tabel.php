@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePasswordOtpResetTable extends Migration
+class CreatePasswordOtpResetTabel extends Migration
 {
     /**
      * Run the migrations.
