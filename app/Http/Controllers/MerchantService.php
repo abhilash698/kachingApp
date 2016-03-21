@@ -150,6 +150,7 @@ class MerchantService extends Controller {
 			'description' => 'required|min:10',
 			'tags' => 'required',
 			'cost_two' => 'required',
+			'veg' => 'required',
 			'landline' => 'required', 
 			);
 		$Validator = $this->customValidator($request->all(), $rules, array());
@@ -159,7 +160,7 @@ class MerchantService extends Controller {
 		}
 
 		
-		$storeInput = $request->only('store_name','description','cost_two','landline');
+		$storeInput = $request->only('store_name','description','cost_two','landline','veg');
 		$storeInput['user_id'] = Auth::id();
 
 		$tags = $request->only('tags');
@@ -193,7 +194,7 @@ class MerchantService extends Controller {
 		}
 
 		$store = MerchantStore::find($store_id['store_id']);
-		foreach ($request->only('store_name','description','cost_two','status','landline') as $key => $value) {
+		foreach ($request->only('store_name','description','cost_two','status','landline','veg') as $key => $value) {
 			$store->$key = $value;
 		}
 

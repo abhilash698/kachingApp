@@ -105,7 +105,7 @@ class CustomerService extends Controller {
         $user_id = Auth::user()->id;
 		$input = $request->only('tags');
 		if (empty($input['tags'])) {
-			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.cost_two,address.latitude,address.longitude,merchant.name, 
+			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.veg,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
 			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
@@ -127,7 +127,7 @@ class CustomerService extends Controller {
 			/*$tags = explode(',', $input['tags']); 
 			$in = "IN ('" . implode("', '", $tags) . "')";*/
 
-			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.cost_two,address.latitude,address.longitude,merchant.name, 
+			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.veg,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
 			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
@@ -168,7 +168,7 @@ class CustomerService extends Controller {
 		$location = $request->only('latitude','longitude');
         $user_id = Auth::user()->id;
 		if (!empty($keyword)) {
-			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.cost_two,address.latitude,address.longitude,merchant.name, 
+			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.veg,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
 			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
