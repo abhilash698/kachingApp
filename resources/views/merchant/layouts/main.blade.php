@@ -97,6 +97,13 @@
             </a>
             <span class="icon-thumbnail "><i class="fa fa-user"></i></span>
           </li>
+
+          <li class="lg-hidden hidden-md hidden-lg">
+            <a href="/logout" class="detailed">
+              <span class="title">Logout</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-user"></i></span>
+          </li>
           
         </ul>
         <div class="clearfix"></div>
@@ -352,9 +359,7 @@
         <div class="pull-right full-height visible-sm visible-xs">
           <!-- START ACTION BAR -->
           <div class="sm-action-bar">
-            <a href="#" class="btn-link" data-toggle="quickview" data-toggle-element="#quickview">
-              <span class="icon-set menu-hambuger-plus"></span>
-            </a>
+             
           </div>
           <!-- END ACTION BAR -->
         </div>

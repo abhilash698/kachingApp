@@ -26,7 +26,7 @@
                 <div class="row">
                  @foreach($offers as $offer)
                   <!-- OFFER START -->
-                  <div class="col-sm-8 col-md-6 col-lg-4 col-xs-8 offer">
+                  <div class="col-sm-6 col-md-6 col-lg-4 col-xs-12 offer">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 btn-group">
                       <input type='hidden' value ='{{$offer->id}}' name='offerId'>
                       <input type='hidden' value ='{{$offer->title}}' name='offerTitle'>
@@ -52,7 +52,7 @@
                             <p class='title{{$offer->id}}'>{{$offer->title}}</p>
                           </div>
 
-                          <div class='col-lg-5 col-md-5 col-sm-5 col-xs-6 dy-txt'>
+                          <div class='col-lg-5 col-md-5 col-sm-5 col-xs-5 dy-txt'>
                             <i class='fa fa-thumbs-o-up'></i>
                             <span> Kaching</span><span class="bubble">
                                   @if(count($offer->votesCount) == 0)
@@ -64,7 +64,7 @@
                                   @endif
                             </span>
                           </div>
-                          <div class='col-lg-4 col-md-4 col-sm-5 col-xs-6 dy-txt'>
+                          <div class='col-lg-4 col-md-4 col-sm-4 col-xs-4 dy-txt'>
                             <i class='fa fa-heart-o'></i>
                             <span> Like</span><span class="bubble">
                                   @if(count($offer->favouriteCount) == 0)
@@ -76,7 +76,7 @@
                                   @endif
                             </span>
                           </div>
-                          <div class='col-lg-3 col-md-3 hidden-sm hidden-xs dy-txt'>
+                          <div class='col-lg-3 col-md-3 col-sm-3 col-xs-3  dy-txt'>
                             <span> more..</span>
                           </div>
 
