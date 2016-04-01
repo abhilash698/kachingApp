@@ -11,7 +11,7 @@ class Offers extends Model
     use SoftDeletes;
     
     protected $table = 'offers';
-    protected $fillable = ['store_id','title','fineprint','startDate','endDate','status'];
+    protected $fillable = ['store_id','title','fineprint','startDate','endDate','status','is_parent','is_child','parent_id'];
     protected $dates = ['deleted_at'];
 
     public function Store()

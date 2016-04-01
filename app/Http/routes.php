@@ -80,6 +80,25 @@ Route::group(['prefix' => 'api/merchant/v1', 'middleware' => ['api:merchant']], 
     Route::post('/mobile/update' , 'MerchantService@editMobile');
 }); 
 
+Route::group(['prefix' => 'api/merchant/v2', 'middleware' => ['api:merchant']], function() {
+    Route::post('/add/store','V2\MerchantServiceV2@postStore');
+    Route::post('/add/store/address','V2\MerchantServiceV2@addStoreAddress');
+    Route::post('/tags', 'V2\MerchantServiceV2@getTags'); 
+    Route::post('/add/offer', 'V2\MerchantServiceV2@addOffer'); 
+    Route::post('/edit/store', 'V2\MerchantServiceV2@editStore'); 
+    Route::post('/edit/store/address', 'V2\MerchantServiceV2@editStoreAddress'); 
+    Route::post('/edit/offer', 'V2\MerchantServiceV2@editOffer'); 
+    Route::post('/offers','V2\MerchantServiceV2@getStoreOffers');
+    Route::post('/store/details','V2\MerchantServiceV2@getStoreDetails');
+    Route::post('/profile/update' , 'V2\MerchantServiceV2@editProfile');
+    Route::post('/updated/validateOtp' , 'V2\MerchantServiceV2@validateUpdatedMobileOtp');
+    Route::post('/changepassword' , 'V2\MerchantServiceV2@changePassword');
+    Route::post('/mobile/update' , 'V2\MerchantServiceV2@editMobile');
+    Route::post('/linked/offers' , 'V2\MerchantServiceV2@getLinkedStoreOffers');
+    Route::post('/getCryptToken' , 'V2\MerchantServiceV2@getCryptToken');
+
+}); 
+
  
 
  
@@ -101,6 +120,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:superAdmin']], functio
     Route::get('/dashboard', function () {
         return redirect('/dashboard');
     });
+
+    Route::get('/addSuperMerchant', 'Admin\AdminController@getAddSuperMerchant');
+    Route::post('/add/supermerchant', 'Admin\AdminController@addSuperMerchant');
+
+
     
     Route::get('/dashboard', 'Admin\AdminController@getDashboard');
 

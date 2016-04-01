@@ -58,6 +58,63 @@ class AdminController extends Controller
 		return view('admin.elements',$output);
 	}
 
+	public function getAddSuperMerchant(){
+		$matchThese = ['status' => true , 'is_parent' => false , 'is_child' => false];
+		$output['stores'] = MerchantStore::with(['Address','Merchant'])->where($matchThese)->orderby('id','DESC')->get(); //
+		return view('admin.addSuperMerchant',$output);
+	}
+
+	public function addSuperMerchant(request $request){
+
+		$validator = Validator::make($request->all(), [
+            'superMerchant' => 'required',
+            'childMercahnts' => 'required'
+        ]);
+
+        if($validator->fails()){
+        	return redirect('admin/addSuperMerchant')
+                        ->withErrors($validator);  
+        }
+
+        $childs = explode(',', $request->input('childMercahnts'));
+        foreach (array_keys($childs, $request->input('superMerchant')) as $key) {
+		    unset($childs[$key]);
+		}
+
+		$superMerchant = MerchantStore::find($request->input('superMerchant'));
+		if(!$superMerchant->is_parent){
+			$superMerchant->is_parent = true;
+			$superMerchant->save();
+		}
+		else{
+			return redirect('admin/addSuperMerchant')
+                        ->with('message','Super Merchant Selected already used as Super Merchant');
+		}
+
+        $message = '';
+        foreach ($childs as $value) {
+        	$childMerchant = MerchantStore::find($value);
+        	if(!$childMerchant->is_child){
+        		$childMerchant->is_child = true;
+	        	$childMerchant->parent_id = $superMerchant->id;
+	        	$childMerchant->save();
+        	}
+        	else{
+        		$message .= $childMerchant->store_name.',';
+
+        	}
+        	unset($childMercahnt);
+        }
+
+        if(!empty($message)){
+        	$message = 'Given Child Merchants '.$message.' cannot be added as child for the give super merchant.'.$superMerchant->store_name;
+        	return redirect('admin/addSuperMerchant')->with('message',$message);
+        }
+
+        return redirect('admin/addSuperMerchant');
+		
+	}
+
 	public function getAddElement($element){
 		switch ($element) {
 			case 'tag':

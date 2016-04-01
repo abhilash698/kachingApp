@@ -11,7 +11,7 @@ class MerchantStore extends Model
     
 
     protected $table = 'merchant_store';
-    protected $fillable = ['user_id','store_name','logoUrl','description','cost_two','latitude','longitude','landline','veg'];
+    protected $fillable = ['user_id','store_name','logoUrl','description','cost_two','latitude','longitude','landline','veg','is_parent','is_child','parent_id'];
 
     public function Merchant()
     {

@@ -86,6 +86,14 @@
          $("#storeTags").val(selMulti.join(","));
     });
 
+    $("#add-supermerchant").click(function(){
+         var selMulti = $.map($("#selMultiTags option:selected"), function (el, i) {
+             return $(el).val();
+         });
+
+         $("#multiMerchants").val(selMulti.join(","));
+    });
+
     $("#add-user").click(function(){
          var selMulti = $.map($("#selMultiAdd option:selected"), function (el, i) {
              return $(el).val();

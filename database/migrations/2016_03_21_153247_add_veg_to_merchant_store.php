@@ -24,6 +24,9 @@ class AddVegToMerchantStore extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('merchant_store', function($table)
+        {
+            $table->dropColumn('veg');
+        });
     }
 }

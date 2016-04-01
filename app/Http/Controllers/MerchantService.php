@@ -44,6 +44,7 @@ class MerchantService extends Controller {
 		return $hasStore;
     }
 
+
 	public function getTags(){
 		return response()->json(['response_code' => 'RES_TAGS' , 'messages' => 'Tags' , 'data' => Tag::get()]);
 	}
