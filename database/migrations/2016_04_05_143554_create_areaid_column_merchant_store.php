@@ -13,7 +13,7 @@ class CreateAreaidColumnMerchantStore extends Migration
     public function up()
     {
         Schema::table('merchant_store_address', function ($table) {
-            $table->integer('area_id')->unsigned()->default(1);
+            $table->integer('area_id')->unsigned();
             $table->foreign('area_id')->references('id')->on('areas');     
         });
     }
