@@ -39,7 +39,7 @@
                       <select class="full-width" name='superMerchant' data-placeholder="Select Super Merchant" data-init-plugin="select2" required>
 
                         @foreach ($stores as $store)
-                           <option value="{{$store->id}}">@if(isset($store->Address)){{$store->store_name.', '.$store->Address->Area->title }}@endif</option>
+                           @if(isset($store->Address))<option value="{{$store->id}}">{{$store->store_name.', '.$store->Address->Area->title }}</option>@endif
                         @endforeach
                       </select>
                     </div>
@@ -68,7 +68,7 @@
                         <label>Child Stores</label>
                         <select class=" full-width" id='selMultiTags'  data-init-plugin="select2" multiple required>
                           @foreach ($stores as $store)
-                          <option  value="{{$store->id}}" >@if(isset($store->Address)){{$store->store_name.' ,'.$store->Address->Area->title }}@endif</option>
+                          @if(isset($store->Address)) <option  value="{{$store->id}}" >{{$store->store_name.' ,'.$store->Address->Area->title }}</option>@endif
                           @endforeach
                         </select>
                         <input type='hidden' name='childMercahnts' id='multiMerchants'>
