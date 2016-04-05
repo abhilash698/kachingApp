@@ -30,4 +30,8 @@ class MerchantStore extends Model
         return $this->belongsToMany('App\Tag', 'tag_store', 'store_id', 'tag_id');
     }
 
+    public function OffersCount()
+    {
+        return $this->Offers()->selectRaw('store_id, count(*) as count')->groupBy('store_id');
+    }
 }

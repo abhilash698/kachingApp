@@ -36,6 +36,7 @@ Route::get('api/Countries', 'ElementService@getCountries');
 Route::get('api/appElements', 'ElementService@appElements');
 
 Route::get('api/allElements', 'ElementService@allElements');
+Route::get('api/allElementsv2', 'ElementService@allElementsV2');
 
 Route::group(['prefix' => 'api/customer/v1', 'middleware' => ['api:customer']], function() {
     Route::post('/tags', 'CustomerService@getTags'); 

@@ -161,7 +161,7 @@ class MerchantService extends Controller {
 
 		
 		$storeInput = $request->only('store_name','description','cost_two','landline');
-		if(!empty($request->input('veg'))){
+		if($request->has('veg')){
 			$storeInput['veg'] = $request->input('veg');
 		}
 		

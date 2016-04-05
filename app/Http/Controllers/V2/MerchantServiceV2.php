@@ -34,10 +34,14 @@ class MerchantServiceV2 extends MerchantService {
 
 		if($storeMain->is_parent){
 			$matchThese = [ 'is_child' => true , 'parent_id' => $storeMain->id];
-			$stores = MerchantStore::where($matchThese)->get();
+			$stores = MerchantStore::with('Address','OffersCount')->where($matchThese)->get();
 			foreach ($stores as $key => $store) {
-				$linked[$key]['store_token'] = Crypt::encrypt($store->id);
+				$linked[$key]['store_id']   = $store->id;
 				$linked[$key]['store_name'] = $store->store_name;
+				$linked[$key]['store_area'] = $store->Address->Area->title;
+				$linked[$key]['store_city'] = $store->Address->City->title;
+				$linked[$key]['offers_count'] = $store->OffersCount->first()->count;
+
 			}
 		}
 		else{
@@ -71,10 +75,53 @@ class MerchantServiceV2 extends MerchantService {
     	return false;
     }
 
+    public function postStore(request $request){
+		
+		$rules = array(
+			'store_name' => 'required|min:2|max:60', 
+			'tags' => 'required',
+			'cost_two' => 'required',
+			'landline' => 'required', 
+			'veg' => 'required',
+			);
+		$Validator = $this->customValidator($request->all(), $rules, array());
+		
+		if($Validator->fails()){
+			return response()->json([ 'response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
+		}
+
+		
+		$storeInput = $request->only('store_name','cost_two','landline','veg');
+		$storeInput['user_id'] = Auth::id();
+
+		$tags = $request->only('tags');
+		$tagStore = explode(',', $tags['tags']);
+		$store = MerchantStore::create($storeInput);
+		
+		if($request->hasFile('logo'))
+		{
+			$image = $request->file('logo');
+	        $imageName = strtotime(Carbon::now()).md5($store->id).'.'. $image->getClientOriginalExtension();
+	        $path = public_path('assets/img/stores/'.$imageName);
+	        Image::make($image->getRealPath())->resize(280, null, function ($constraint) {
+														    $constraint->aspectRatio();
+														})->save($path);
+	        $store->logoUrl = $imageName;
+	    }
+
+        
+        $store->status = true;  //commet it when required
+		$store->save();
+		$store->tags()->attach($tagStore);
+
+		return response()->json(['response_code' => 'RES_SC' , 'messages' => 'Store Created' ,'data' =>$store ],201);
+	}
+
     public function addStoreAddress(request $request){
 		$rules = array(
 			'street' => 'required',
 			'city_id' => 'required',
+			'area_id' => 'required',
 			'state_id' => 'required',
 			'country_id' => 'required',
 			'pincode' => 'required|size:6',
@@ -103,7 +150,7 @@ class MerchantServiceV2 extends MerchantService {
 		$store_id = Auth::user()->stores->id;
 
 		$store = MerchantStore::find($store_id);
-		foreach ($request->only('store_name','description','cost_two','status','landline','veg') as $key => $value) {
+		foreach ($request->only('store_name','cost_two','status','landline','veg') as $key => $value) {
 			$store->$key = $value;
 		}
 
@@ -128,7 +175,7 @@ class MerchantServiceV2 extends MerchantService {
 		$matchThese = ['store_id' => $store_id];
 		$address = MerchantStoreAddress::where($matchThese)->first();
 
-		foreach ($request->only('street','city_id','state_id','country_id','pincode','latitude','longitude') as $key => $value) {
+		foreach ($request->only('street','area_id','city_id','state_id','country_id','pincode','latitude','longitude') as $key => $value) {
 			$address->$key = $value;
 		}
 		$address->save();
@@ -157,11 +204,11 @@ class MerchantServiceV2 extends MerchantService {
 			return response()->json(['response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
 		}
 
-		if($request->has('store_token')){  
+		if($request->has('store_id')){  
 		   // edit offer for only linked store * two cases -> supermerchant tab edit global offer selecting single merchant 
 		   // and sub merchant tab edit individual offer. store token can be passed to edit that store offer only
 			
-			$store_id = Crypt::decrypt($request->input('store_token'));
+			$store_id = $request->input('store_id');
 			
 			if(!$this->checkUserHasStorePermission($store_id)){ 
 			    // check token give is valid , checking wiether token belongs to child merchant
@@ -218,10 +265,10 @@ class MerchantServiceV2 extends MerchantService {
 
 		$offerArr = $request->only('title','fineprint','startDate','endDate');
 
-		if($request->has('store_token')){
+		if($request->has('store_id')){
 			// adding offer to single store from super merchant logged in user
 
-			$store_id = Crypt::decrypt($request->input('store_token'));
+			$store_id = $request->input('store_id');
 
 			if(!$this->checkUserHasStorePermission($store_id)){
 				// cheking super merchant has permission to add offer to selected store
@@ -268,7 +315,7 @@ class MerchantServiceV2 extends MerchantService {
 
 	public function getLinkedStoreOffers(request $request){
 		$rules = array(
-			'store_token' => 'required',
+			'store_id' => 'required',
 		);
 
 		$Validator = $this->customValidator($request->all(), $rules, array());
@@ -277,7 +324,7 @@ class MerchantServiceV2 extends MerchantService {
 		if($Validator->fails()){
 			return response()->json(['response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
 		}
-		$store_id = Crypt::decrypt($request->input('store_token'));
+		$store_id = $request->input('store_id');
 
 
 		if(!$this->checkUserHasStorePermission($store_id)){
@@ -287,11 +334,6 @@ class MerchantServiceV2 extends MerchantService {
 
 		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => Offers::with('votesCount','favouriteCount')->where('store_id',$store_id)->get()]);
 	}
-
-	public function getCryptToken(request $request){
-		return Crypt::encrypt($request->input('id'));
-	}
-
 
 
 }

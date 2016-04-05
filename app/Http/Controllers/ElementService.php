@@ -6,7 +6,7 @@ use App\Countries;
 use App\States;
 use App\AppElement;
 use App\Tag;
- 
+use App\Areas;
 
 class ElementService extends Controller {
 	
@@ -29,6 +29,11 @@ class ElementService extends Controller {
 
 	 public function allElements(){
 	 	$output = ['tags'=> Tag::get() , 'cities' => Cities::get() , 'states' => States::get() , 'countries' =>  Countries::get() , 'appElements' =>AppElement::find(1)  ];
+	 	return response()->json(['response_code' => 'RES_STS' , 'messages' => 'States' , 'data' => $output]);
+	 }
+
+	 public function allElementsV2(){
+	 	$output = ['tags'=> Tag::get() , 'cities' => Cities::with('Areas')->get() , 'states' => States::get() , 'countries' =>  Countries::get() , 'appElements' =>AppElement::find(1)  ];
 	 	return response()->json(['response_code' => 'RES_STS' , 'messages' => 'States' , 'data' => $output]);
 	 }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MerchantStoreAddress extends Model
 {
     protected $table = 'merchant_store_address';
-    protected $fillable = ['store_id','street','city_id','state_id','country_id','pincode','latitude','longitude'];
+    protected $fillable = ['store_id','street','area_id','city_id','state_id','country_id','pincode','latitude','longitude'];
 
     public function Store()
     {
@@ -27,6 +27,11 @@ class MerchantStoreAddress extends Model
     public function City()
     {
         return $this->belongsTo('App\Cities','city_id','id');
+    }
+
+    public function Area()
+    {
+        return $this->belongsTo('App\Areas','area_id','id');
     }
 
     
