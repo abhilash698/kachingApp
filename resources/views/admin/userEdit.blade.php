@@ -81,10 +81,10 @@
                       </div>
                        
                       <div class="form-group">
-                          <div class="radio radio-success">
-                            <input type="radio" value="1" {{ $user->status ? 'checked="checked"' : ''}}  name="status" id="yes">
+                          <div class="">
+                            <input type="radio" value="1" {{ $user->status ? 'checked="checked"' : ''}}  name="status" >
                             <label for="yes">Active</label>
-                            <input type="radio" {{ !$user->status ? 'checked="checked"' : ''}} value="0" name="status" id="no">
+                            <input type="radio" {{ !$user->status ? 'checked="checked"' : ''}} value="0" name="status" >
                             <label for="no">Inactive</label>
                           </div>
                       </div>

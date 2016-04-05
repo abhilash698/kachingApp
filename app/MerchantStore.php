@@ -34,4 +34,13 @@ class MerchantStore extends Model
     {
         return $this->Offers()->selectRaw('store_id, count(*) as count')->groupBy('store_id');
     }
+
+    public function scopeParents($query)
+    {
+        return $query->where('status',true)->where('is_parent', true)->where('is_child',false)->select('store_name','id','is_parent','is_child');
+    }
+
+    public function scopeChilds($query,$parent_id){
+        return $query->where('status',true)->where('is_parent', false)->where('is_child',true)->where('parent_id',$parent_id)->select('store_name','id','is_parent','is_child');
+    }
 }

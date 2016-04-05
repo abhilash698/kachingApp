@@ -124,6 +124,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:superAdmin']], functio
 
     Route::get('/addSuperMerchant', 'Admin\AdminController@getAddSuperMerchant');
     Route::post('/add/supermerchant', 'Admin\AdminController@addSuperMerchant');
+    Route::post('/edit/supermerchant', 'Admin\AdminController@editSuperMerchant');
+
+    Route::get('/superMerchants', 'Admin\AdminController@getSuperMerchantsList');
+    Route::get('/superMerchant/{id}/edit', 'Admin\AdminController@getSuperMerchantEdit');
+    Route::get('/superMerchant/{id}/delete', 'Admin\AdminController@getSuperMerchantDelete');
 
 
     

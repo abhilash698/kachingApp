@@ -85,8 +85,8 @@
                       </div>
                        
                       <div class="form-group">
-                          <div class="radio radio-success">
-                            <input type="radio" value="1" checked='checked' name="status" id="yes">
+                          <div class="">
+                            <input type="radio" value="1" checked='checked' name="status" >
                             <label for="yes">Active</label>
                             <input type="radio" value="0" name="status" id="no">
                             <label for="no">Inactive</label>

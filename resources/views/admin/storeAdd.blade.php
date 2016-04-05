@@ -71,9 +71,15 @@
                         </div>
 
                         <div class="form-group form-group-default required">
-                          <label>Description <span class='error-msg'>{{ $errors->first('description') }}</span></label>
-                          <textarea name='description' style="width:100%; height: 150px;"></textarea>
+                          <label>Veg </label>
+                            <div class="">
+                              <input type="radio" value="1" name="veg" >
+                              <label for="yes">Yes</label>
+                              <input type="radio" value="0" name="veg" >
+                              <label for="no">No</label>
+                            </div>
                         </div>
+
                         <div class="form-group form-group-default required">
                           <label>Logo <span class='error-msg'>{{ $errors->first('logo') }}</span></label>
                           <input name="logo" type="file" />
@@ -93,10 +99,10 @@
                        
                        
                       <div class="form-group">
-                          <div class="radio radio-success">
-                            <input type="radio" value="1"  name="status" id="yes">
+                          <div class="">
+                            <input type="radio" value="1"  name="status" >
                             <label for="yes">Active</label>
-                            <input type="radio" value="0"  name="status" id="no">
+                            <input type="radio" value="0"  name="status" >
                             <label for="no">Inactive</label>
                           </div>
                       </div>
@@ -110,6 +116,13 @@
                       <select class="cs-select cs-skin-slide" name='city_id' data-init-plugin="cs-select">
                         @foreach($cities as $city)
                         <option  value="{{$city->id}}">{{$city->title}}</option>
+                        @endforeach
+                      </select>
+
+                      <span class='error-msg'>{{ $errors->first('area_id') }}</span>
+                      <select class="cs-select cs-skin-slide" name='area_id' data-init-plugin="cs-select">
+                        @foreach($areas as $area)
+                        <option  value="{{$area->id}}">{{$area->title}}</option>
                         @endforeach
                       </select>
 

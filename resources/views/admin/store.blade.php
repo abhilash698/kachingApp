@@ -38,7 +38,7 @@
                         </div>
                         <div class="panel-body">
                           <h3>{{ $store->store_name }}</h3>
-                          <p>{{  $store->description }}</p>
+                          <p>@if(isset($store->Address)){{ $store->Address->Area->title }}@endif</p>
                           <div class="row m-b-20 m-t-20">
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Contact </span>
                             </div>
@@ -63,6 +63,11 @@
                             <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Created Time</span>
                             </div>
                             <div class="col-xs-6 text-right">{{ $store->created_at }}</div>
+                          </div>
+                          <div class="row m-b-20 m-t-20">
+                            <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Veg</span>
+                            </div>
+                            <div class="col-xs-6 text-right">{{$store->veg ? 'Yes':'No'}}</div>
                           </div>
                           <br>
                           <a href="/admin/store/{{ $store->id }}/addoffer"><button class="btn btn-primary add-now">Add Offer</button></a>

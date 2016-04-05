@@ -70,7 +70,7 @@
                         </div>
                         <div class="inline m-l-10">
                           <p class="no-margin text-white fs-12">{{ $store->Merchant->name }}</p>
-                          <p class="no-margin text-white fs-12">{{ $store->status ? 'Active':'InActive' }}</p>
+                          <p class="no-margin text-white fs-12">@if(isset($store->Address)){{ $store->Address->Area->title.', ' }}@endif{{ $store->status ? 'Active':'InActive' }}</p>
                         </div>
                          
                         <div class="clearfix"></div>
@@ -129,7 +129,7 @@
             </div>
             <div class="col-sm-5 p-r-35 p-t-35 p-l-35 full-height item-description">
               <h2 class="semi-bold no-margin font-montserrat">{{ $store->store_name }}</h2>
-              <p class="fs-13">{{ $store->description }}.
+              <p class="fs-13">@if(isset($store->Address)){{ $store->Address->Area->title }}@endif
               </p>
               <div class="row m-b-20 m-t-20">
                 <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Merchant Contact</span>
@@ -155,6 +155,11 @@
                 <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Created Time</span>
                 </div>
                 <div class="col-xs-6 text-right">{{ $store->created_at }}</div>
+              </div>
+              <div class="row m-b-20 m-t-20">
+                <div class="col-xs-6"><span class="font-montserrat all-caps fs-11">Veg</span>
+                </div>
+                <div class="col-xs-6 text-right">{{$store->veg ? 'Yes':'No'}}</div>
               </div>
               
               <br>

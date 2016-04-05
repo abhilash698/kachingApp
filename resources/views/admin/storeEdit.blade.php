@@ -64,16 +64,21 @@
                           <input type="text" class="form-control" value='{{$store->store_name}}' name="store_name" required>
                         </div>
                         <div class="form-group form-group-default required">
-                          <label>Description <span class='error-msg'>{{ $errors->first('description') }}</span></label>
-                          <textarea name='description' style="width:100%; height: 150px;">{{ $store->description }}</textarea>
-                        </div>
-                        <div class="form-group form-group-default required">
                           <label>Landline <span class='error-msg'>{{ $errors->first('landline') }}</span></label>
                           <input type="text" class="form-control" value='{{$store->landline}}'  name="landline" required>
                         </div>
                         <div class="form-group form-group-default required">
                           <label>Cost for Two <span class='error-msg'>{{ $errors->first('cost_two') }}</span></label>
                           <input type="text" class="form-control" value='{{$store->cost_two}}' name="cost_two" required>
+                        </div>
+                        <div class="form-group form-group-default required">
+                          <label>Veg </label>
+                            <div class="">
+                              <input type="radio" value="1" {{ $store->veg ? 'checked="checked"' : ''}}  name="veg" >
+                              <label for="yes">Yes</label>
+                              <input type="radio" value="0" {{ !$store->veg ? 'checked="checked"' : ''}} name="veg" >
+                              <label for="no">No</label>
+                            </div>
                         </div>
 
                         <div class="form-group form-group-default required">
@@ -95,10 +100,10 @@
                        
                        
                       <div class="form-group">
-                          <div class="radio radio-success">
-                            <input type="radio" value="1" {{ $store->status ? 'checked="checked"' : ''}}  name="status" id="yes">
+                          <div class="">
+                            <input type="radio" value="1" {{ $store->status ? 'checked="checked"' : ''}}  name="status" >
                             <label for="yes">Active</label>
-                            <input type="radio" value="0" {{ !$store->status ? 'checked="checked"' : ''}} name="status" id="no">
+                            <input type="radio" value="0" {{ !$store->status ? 'checked="checked"' : ''}} name="status" >
                             <label for="no">Inactive</label>
                           </div>
                       </div>
@@ -112,6 +117,13 @@
                       <select class="cs-select cs-skin-slide" name='city_id' data-init-plugin="cs-select">
                         @foreach($cities as $city)
                         <option  @if(isset($store->Address) && $store->address->city_id == $city->id)  {{ 'selected' }} @endif value="{{$city->id}}">{{$city->title}}</option>
+                        @endforeach
+                      </select>
+
+                      <span class='error-msg'>{{ $errors->first('area_id') }}</span>
+                      <select class="cs-select cs-skin-slide" name='area_id' data-init-plugin="cs-select">
+                        @foreach($areas as $area)
+                        <option  @if(isset($store->Address) && $store->address->area_id == $area->id)  {{ 'selected' }} @endif value="{{$area->id}}">{{$area->title}}</option>
                         @endforeach
                       </select>
 

@@ -12,6 +12,7 @@ use App\Offers;
 use App\Role;
 use App\Tag;
 use App\Cities;
+use App\Areas;
 use App\States;
 use App\Countries;
 use Hash;
@@ -65,11 +66,37 @@ class AdminController extends Controller
 		return view('admin.addSuperMerchant',$output);
 	}
 
+	public function getSuperMerchantsList(){
+		$stores = MerchantStore::parents()->with('Address.Area')->paginate(20);
+		foreach ($stores as $key => $store) {
+			$stores[$key]['childs'] = MerchantStore::childs($store->id)->with('Address.Area')->get();
+		}
+		$output['stores'] = $stores;
+		return view('admin.superMerchantsList',$output);
+	}
+
+	public function getSuperMerchantEdit($id){
+		$matchThese = ['id' => $id ,'status' => true , 'is_parent' => true , 'is_child' => false];
+		$parent = MerchantStore::where($matchThese)->with('Address.Area')->first();
+		if(empty($parent)){
+			return 'No Store Exists';
+		}
+		$matchThese = ['parent_id' => $parent->id , 'status' => true , 'is_parent' => false , 'is_child' => true];
+		$childs = MerchantStore::where($matchThese)->with('Address.Area')->get();
+
+		$matchThese = ['status' => true , 'is_parent' => false , 'is_child' => false];
+		$excludedStores = MerchantStore::with(['Address.Area'])->where($matchThese)->orderby('id','DESC')->get(); //
+
+		$output = ['parent' => $parent , 'childs' => $childs , 'excludedStores' => $excludedStores];
+
+		return view('admin.editSuperMerchant',$output);
+	}
+
 	public function addSuperMerchant(request $request){
 
 		$validator = Validator::make($request->all(), [
             'superMerchant' => 'required',
-            'childMercahnts' => 'required'
+            'childMerchants' => 'required'
         ]);
 
         if($validator->fails()){
@@ -77,7 +104,7 @@ class AdminController extends Controller
                         ->withErrors($validator);  
         }
 
-        $childs = explode(',', $request->input('childMercahnts'));
+        $childs = explode(',', $request->input('childMerchants'));
         foreach (array_keys($childs, $request->input('superMerchant')) as $key) {
 		    unset($childs[$key]);
 		}
@@ -112,7 +139,65 @@ class AdminController extends Controller
         	return redirect('admin/addSuperMerchant')->with('message',$message);
         }
 
-        return redirect('admin/addSuperMerchant');
+        return redirect('admin/superMerchants');
+		
+	}
+
+	public function editSuperMerchant(request $request){
+
+		$validator = Validator::make($request->all(), [
+            'superMerchant' => 'required',
+            'childMerchants' => 'required',
+            'parent_id' => 'required'
+        ]);
+
+        if($validator->fails()){
+        	return redirect('admin/addSuperMerchant')
+                        ->withErrors($validator);  
+        }
+
+        $childs = explode(',', $request->input('childMerchants'));
+
+        foreach (array_keys($childs, $request->input('superMerchant')) as $key) {
+		    unset($childs[$key]);
+		}
+
+		$old_parent_id = $request->input('parent_id'); /// first reset all previously added parent and child linking
+
+		MerchantStore::where('id',$old_parent_id)->orWhere('parent_id',$old_parent_id)->update(['is_parent'=> false , 'is_child' => false , 'parent_id' => '0']);
+
+		$superMerchant = MerchantStore::find($request->input('superMerchant'));
+		if(!$superMerchant->is_parent){
+			$superMerchant->is_parent = true;
+			$superMerchant->save();
+		}
+		else{
+			return redirect('admin/addSuperMerchant')
+                        ->with('message','Super Merchant Selected already used as Super Merchant');
+		}
+
+        $message = '';
+
+        foreach ($childs as $value) {
+        	$childMerchant = MerchantStore::find($value);
+        	if(!$childMerchant->is_child){
+        		$childMerchant->is_child = true;
+	        	$childMerchant->parent_id = $superMerchant->id;
+	        	$childMerchant->save();
+        	}
+        	else{
+        		$message .= $childMerchant->store_name.',';
+
+        	}
+        	unset($childMercahnt);
+        }
+
+        if(!empty($message)){
+        	$message = 'Given Child Merchants '.$message.' cannot be added as child for the give super merchant.'.$superMerchant->store_name;
+        	return redirect('admin/addSuperMerchant')->with('message',$message);
+        }
+
+        return redirect('admin/superMerchants');
 		
 	}
 
@@ -332,7 +417,7 @@ class AdminController extends Controller
 		            ->orwhereHas('Merchant', function($query) use ($keyword) {
 		                    $query->where('name', 'LIKE', "%$keyword%");
 		                })
-					->paginate(10);
+					->paginate(16);
 		          
 		$output = array('stores' => $stores);
 		return view('admin.stores',$output);
@@ -468,12 +553,13 @@ class AdminController extends Controller
 
 	public function getAddStore($id){
 		$tags = Tag::all();
+		$areas = Areas::all();
 		$cities = Cities::all();
 		$states = States::all();
 		$countries = Countries::all();
 		$user = User::where('id',$id)->first();
 
-		$output = ['user'=>$user, 'tags' => $tags, 'cities'=> $cities , 'states' => $states , 'countries' => $countries];
+		$output = ['user'=>$user, 'tags' => $tags, 'areas' => $areas, 'cities'=> $cities , 'states' => $states , 'countries' => $countries];
 		return view('admin.storeAdd',$output);
 
 	}
@@ -482,11 +568,12 @@ class AdminController extends Controller
 		$validator = Validator::make($request->all(), [
 			'user_id' => 'required',
             'store_name' => 'required|max:255',
-            'description' => 'required|min:10',
+            'veg' => 'required',
             'landline' => 'required',
             'status' => 'required',
             'street' => 'required|max:200',
             'city_id' => 'required',
+            'area_id' => 'required',
             'state_id' => 'required',
             'cost_two' => 'required',
             'country_id' => 'required',
@@ -504,8 +591,8 @@ class AdminController extends Controller
         }
         
 
-        $store = MerchantStore::create($request->only('user_id','store_name','description','cost_two','landline','status'));
-        $store->Address()->create($request->only('street','city_id','state_id','country_id','pincode','latitude','longitude'));
+        $store = MerchantStore::create($request->only('user_id','store_name','veg','cost_two','landline','status'));
+        $store->Address()->create($request->only('street','area_id','city_id','state_id','country_id','pincode','latitude','longitude'));
 
         $image = $request->file('logo');
         $imageName = strtotime(Carbon::now()).md5($store->id).'.'. $image->getClientOriginalExtension();
@@ -533,7 +620,7 @@ class AdminController extends Controller
 			}])
 			->where('status',true)
 			->orderby('id','DESC')
-			->paginate(10);
+			->paginate(16);
 		}
 		elseif($type == 'inactive'){
 			$stores = MerchantStore::with(['Address','tags','Merchant','Offers'=> function ($query) use($now){
@@ -541,14 +628,14 @@ class AdminController extends Controller
 			}])
 			->where('status',false)
 			->orderby('id','DESC')
-			->paginate(10);
+			->paginate(16);
 		}
 		else{
 			$stores = MerchantStore::with(['Address','tags','Merchant','Offers'=> function ($query) use($now){
 				$query->where('startDate' , '>=' , $now );
 			}])
 			->orderby('id','DESC')
-			->paginate(10);
+			->paginate(16);
 		}
 		
 		//return $stores;
@@ -581,10 +668,11 @@ class AdminController extends Controller
 
 		$tags = Tag::all();
 		$cities = Cities::all();
+		$areas = Areas::all();
 		$states = States::all();
 		$countries = Countries::all();
 
-		$output = ['store' => $store, 'tags' => $tags, 'cities'=> $cities , 'states' => $states , 'countries' => $countries];
+		$output = ['store' => $store, 'tags' => $tags, 'areas'=> $areas, 'cities'=> $cities , 'states' => $states , 'countries' => $countries];
 		return view('admin.storeEdit',$output);
 
 	}
@@ -593,11 +681,12 @@ class AdminController extends Controller
 		$validator = Validator::make($request->all(), [
 			'store_id' => 'required',
             'store_name' => 'required|max:255',
-            'description' => 'required|min:10',
             'landline' => 'required',
             'cost_two' => 'required',
+            'veg' => 'required',
             'status' => 'required',
             'street' => 'required|max:200',
+            'area_id' => 'required',
             'city_id' => 'required',
             'state_id' => 'required',
             'country_id' => 'required',
@@ -615,7 +704,7 @@ class AdminController extends Controller
         
 
         $store = MerchantStore::find($input['store_id']);
-		foreach ($request->only('store_name','description','cost_two','landline','status') as $key => $value) {
+		foreach ($request->only('store_name','cost_two','veg','landline','status') as $key => $value) {
 			$store->$key = $value;
 		}
 
@@ -640,7 +729,7 @@ class AdminController extends Controller
 		$matchThese = ['store_id' => $input['store_id']];
 		$address = MerchantStoreAddress::where($matchThese)->first();
 
-		foreach ($request->only('street','city_id','state_id','country_id','pincode','latitude','longitude') as $key => $value) {
+		foreach ($request->only('street','area_id','city_id','state_id','country_id','pincode','latitude','longitude') as $key => $value) {
 			$address->$key = $value;
 		}
 		$address->save();

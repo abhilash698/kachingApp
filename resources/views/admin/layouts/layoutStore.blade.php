@@ -65,8 +65,8 @@
             <span class="icon-thumbnail bg-success"><i class="pg-home"></i></span>
           </li>
           <li>
-            <a href="/admin/addSuperMerchant" class="detailed">
-              <span class="super">Add Super Merchant</span>
+            <a href="/admin/superMerchants" class="detailed">
+              <span class="super">Super Merchants</span>
             </a>
             <span class="icon-thumbnail"><i class="fa fa-user-secret"></i></span>
           </li>
