@@ -60,7 +60,8 @@ class AdminController extends Controller
 
 	public function getAddSuperMerchant(){
 		$matchThese = ['status' => true , 'is_parent' => false , 'is_child' => false];
-		$output['stores'] = MerchantStore::with(['Address','Merchant'])->where($matchThese)->orderby('id','DESC')->get(); //
+		$output['stores'] = MerchantStore::with(['Address.Area','Merchant'])->where($matchThese)->orderby('id','DESC')->get(); //
+		//return $output;
 		return view('admin.addSuperMerchant',$output);
 	}
 
