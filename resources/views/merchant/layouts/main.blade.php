@@ -26,6 +26,7 @@
     {!! Html::style('pages/css/pages.css') !!}
     {!! Html::style('assets/css/jquery.datetimepicker.css') !!}
     {!! Html::style('assets/css/merchant.css') !!}
+    {!! Html::style('assets/css/perfect-scrollbar.min.css') !!}
 
     <!--[if lte IE 9]>
         <link href="pages/css/ie9.css" rel="stylesheet" type="text/css" />
@@ -40,38 +41,59 @@
     }
     </script>
   </head>
-  <body class="fixed-header menu-pin menu-behind ">
+  @if($is_super)
+  <body class='fixed-header menu-pin pace-done'>
+  @else
+  <body class="fixed-header menu-pin menu-behind">
+  @endif
+
 
     <div class="se-pre-con"></div>
     <!-- BEGIN SIDEBPANEL-->
     <nav class="page-sidebar" data-pages="sidebar">
+      @if($is_super)
       <!-- BEGIN SIDEBAR MENU TOP TRAY CONTENT-->
       <div class="sidebar-overlay-slide from-top" id="appMenu">
+        @foreach( $linked as $k => $linkedstore)
+        @if ($k % 2 == 0)
         <div class="row">
-          <div class="col-xs-6 no-padding">
-            <a href="#" class="p-l-40"><img src="/assets/img/demo/social_app.svg" alt="socail">
-            </a>
+          <div class="col-xs-12 no-padding padding-5px">
+            <div class='child-merchant-wrapper even-merchant'>
+              <a href="/merchant/linked/store/offers?id={{$linkedstore['store_id']}}" class="p-l-40">
+                <h5 class='store-name'>{{$linkedstore['store_name']}}</h5>
+                <p class='store-area'>{{$linkedstore['store_area']}}</p>
+                <p class='store-offers'>{{$linkedstore['offers_count']}} Offers</p>
+              </a>
+            </div>
           </div>
-          <div class="col-xs-6 no-padding">
-            <a href="#" class="p-l-10"><img src="/assets/img/demo/email_app.svg" alt="socail">
-            </a>
+        @if(count($linked) == ($k+1))
+        </div>
+        @endif
+        @else
+          <div class="col-xs-12 no-padding padding-5px">
+            <div class='child-merchant-wrapper odd-merchant'>
+              <a href="#" class="p-l-40">
+                <h5 class='store-name'>{{$linkedstore['store_name']}}</h5>
+                <p class='store-area'>{{$linkedstore['store_area']}}</p>
+                <p class='store-offers'>{{$linkedstore['offers_count']}} Offers</p>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-xs-6 m-t-20 no-padding">
-            <a href="#" class="p-l-40"><img src="/assets/img/demo/calendar_app.svg" alt="socail">
-            </a>
-          </div>
-          <div class="col-xs-6 m-t-20 no-padding">
-            <a href="#" class="p-l-10"><img src="/assets/img/demo/add_more.svg" alt="socail">
-            </a>
-          </div>
-        </div>
+        @endif
+        @endforeach
       </div>
+      @endif
       <!-- END SIDEBAR MENU TOP TRAY CONTENT-->
       <!-- BEGIN SIDEBAR MENU HEADER-->
       <div class="sidebar-header">
-         
+        @if($is_super)
+        <div class="sidebar-header-controls">
+          <span class='supermerchant-header'>Super Merchant</span>
+          <button type="button" class="btn btn-xs sidebar-slide-toggle btn-link m-l-20" data-pages-toggle="#appMenu"><i class="fa fa-angle-down fs-16"></i>
+          </button>
+        </div>
+        @endif
       </div>
       <!-- END SIDEBAR MENU HEADER-->
       <!-- START SIDEBAR MENU -->
@@ -84,9 +106,17 @@
             </a>
             <span class="icon-thumbnail bg-success"><i class="pg-home"></i></span>
           </li>
+          @if($is_super)
+          <li>
+            <a href="/merchant/linked/offers/all" class="detailed">
+              <span class="title">All Offers</span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-bookmark"></i></span>
+          </li>
+          @endif
           <li class="">
             <a href="/merchant/store" class="detailed">
-              <span class="title">Store</span>
+              <span class="title">Store Info</span>
             </a>
             <span class="icon-thumbnail "><i class="fa fa-building-o"></i></span>
           </li>
@@ -155,6 +185,23 @@
             <div class="modal-body">
               <form role="form" name="offerForm" >
                 <div class="form-group-attached">
+                  @if($is_super)
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group form-group-default form-group-default-select2 required">
+                        <label class="">Select Merchant</label>
+                        <select class="full-width" name='store_token' data-placeholder="Select Merchant" data-init-plugin="select2" required>
+                          <option value='' selected>My Store Only</option>
+                          <option value='all'>All Stores</option>
+                          @foreach($linked as $linkedstore)
+                          <option value="{{$linkedstore['store_id']}}">{{$linkedstore['store_name'].', '.$linkedstore['store_area']}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                       
+                    </div>
+                  </div>
+                  @endif
                   <div class="row">
                     <div class="col-sm-12">
                       <input type="hidden" name="token" value="{{ csrf_token() }}">
@@ -207,7 +254,7 @@
         <div class="modal-content-wrapper">
           <div class="modal-content">
             <div class="modal-body text-center m-t-20">
-              <h4 class="no-margin p-b-10">You have subscribed</h4>
+              <h4 class="no-margin p-b-10"> @if($is_super) This is child offer. Try editing parent offer. @else You cannot edit this offer. Belongs to supermerchant. @endif</h4>
               <button type="button" class="btn btn-primary btn-cons" data-dismiss="modal">Continue</button>
             </div>
           </div>
@@ -586,6 +633,7 @@
    <!--  {!! Html::script('assets/js/gallery.js') !!} -->
     <!-- BEGIN PAGE LEVEL JS -->
     {!! Html::script('assets/js/scripts.js') !!} 
+    {!! Html::script('assets/js/perfect-scrollbar.min.js') !!} 
 
     <script type="text/javascript">
       $(function() {
@@ -598,6 +646,11 @@
         // Animate loader off screen
         $(".se-pre-con").fadeOut("slow");;
       });
+
+      $(function() {
+        // with vanilla JS!
+        Ps.initialize(document.getElementById('appMenu'));
+    });
     </script>
 
     {!! Html::script('assets/js/custom.js') !!} 

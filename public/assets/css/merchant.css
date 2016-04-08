@@ -67,7 +67,7 @@
 	opacity: 1;
 }
 
-.form-group span{
+.form-group span:not(.cs-placeholder,.select2-chosen){
 	color: red;
 	text-transform: capitalize;
 	font-size: 8px;
@@ -120,3 +120,38 @@ if it's not present, don't show loader */
 #verify-mobile-btn{
 	display: none;
 }
+
+
+.padding-5px{
+	padding:5px !important;
+}
+.child-merchant-wrapper{ 
+	text-align:center ;
+}
+.odd-merchant{
+	background-color:#0E95CF ;
+}
+.even-merchant{
+	background-color:#0ECF98 ;
+}
+
+.supermerchant-header{
+	text-transform: uppercase;
+	font-weight: 500;
+	font-size: 14px;
+}
+
+.store-name{
+	color:#fff; margin:0px ; 
+	font-weight:bold !important;
+}
+.store-area{
+	color:#E3E3E3 !important; 
+	text-transform: uppercase ;
+}
+.store-offers{
+	color:#fff ; 
+	text-transform: uppercase ; 
+	padding-bottom:10px;
+}
+ 

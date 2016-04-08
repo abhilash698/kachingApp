@@ -105,6 +105,10 @@ $(document).ready(function() {
 
 	});
 
+	$('.naMessage').click(function(){
+		$('#modalSlideUpSmall').modal('show');
+	});
+
 	$('#submitEdit').click(function(){
 		$('.loading').css('display','block');
 		$.post("/merchant/editOffer",
@@ -143,13 +147,15 @@ $(document).ready(function() {
 
     $('#submitAdd').click(function(){
 		$('.loading-add').css('display','block');
+		
 		$.post("/merchant/addOffer",
 	    {
 	        _token: $('#modalSlideUp :input[name=token]').val(),
 	        title: $('#modalSlideUp :input[name=title]').val(),
 	        startDate: $('#modalSlideUp :input[name=startDate]').val(),
 	        endDate: $('#modalSlideUp :input[name=endDate]').val(),
-	        fineprint: $('#modalSlideUp :input[name=fineprint]').val()
+	        fineprint: $('#modalSlideUp :input[name=fineprint]').val(),
+	        store_token : $('#modalSlideUp :input[name=store_token]').val()
 	    },
 	    function(data, status){
 	        if(data.status == 'fail'){

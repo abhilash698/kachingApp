@@ -183,6 +183,9 @@ Route::post('merchant/forgot/otp', 'Merchant\MerchantController@postForgotOtp');
 Route::post('merchant/forgot/changepassword', 'Merchant\MerchantController@postchangepassword');
 
 Route::group(['prefix' => 'merchant', 'middleware' => ['role:merchant']], function() {
+    Route::get('/linked/offers/all', 'Merchant\MerchantController@getAllStoresOffers');
+    Route::get('/linked/store/offers', 'Merchant\MerchantController@getLinkedStoreOffers');
+
     Route::get('/dashboard', 'Merchant\MerchantController@getDashboard');
     Route::post('/addOffer', 'Merchant\MerchantController@addOffer');
     Route::post('/editOffer', 'Merchant\MerchantController@editOffer');

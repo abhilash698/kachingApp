@@ -12,6 +12,7 @@ use App\Offers;
 use App\Role;
 use App\Tag;
 use App\Cities;
+use App\Areas;
 use App\States;
 use App\Countries;
 use App\TempMobile;
@@ -25,9 +26,63 @@ use Input;
 use Auth;
 use Session;
 use Curl;
+use Crypt;
 
 class MerchantController extends Controller
 {
+	public function __construct()
+	{
+		$is_super = Auth::User()->Stores->is_parent;
+		if($is_super){
+			$matchThese = [ 'is_child' => true , 'parent_id' => Auth::User()->Stores->id];
+			$stores = MerchantStore::with('Address','OffersCount')->where($matchThese)->get();
+			foreach ($stores as $key => $store) {
+				$linked[$key]['store_id']   = Crypt::encrypt($store->id);
+				$linked[$key]['store_name'] = $store->store_name;
+				$linked[$key]['store_area'] = $store->Address->Area->title;
+				$linked[$key]['store_city'] = $store->Address->City->title;
+				if(!empty($store->OffersCount->first())){
+					$linked[$key]['offers_count'] = $store->OffersCount->first()->count;
+				}
+				else{
+					$linked[$key]['offers_count'] = 0;
+				}
+
+			}
+		}
+		else{
+			$linked = '';
+		}
+
+		$output = ['is_super' => $is_super , 'linked' => $linked];
+		view()->share($output);
+		$this->middleware('auth');
+	}
+
+	protected function checkIfStoreIsParent($store_id){
+    	$store = Auth::user()->stores;
+    	if($store->is_parent && ($store_id == $store->id)){
+    		return true;
+    	}
+    	return false;
+    }
+
+    protected function checkUserHasStorePermission($store_id){
+    	$store = Auth::user()->stores;
+    	if($store_id == $store->id){
+    		return true;
+    	}
+
+    	$matchThese = ['id' => $store_id , 'parent_id' => $store->id , 'is_child' => true];
+    	$merchant  = MerchantStore::where($matchThese)->first();
+
+		if(empty($merchant) || $merchant == ''){
+			return false;
+		}
+		
+		return true;
+    }
+
 	protected function customValidator(array $data, array $rules, array $messages)
     {
         return Validator::make($data,$rules,$messages);  // muqf mobile unique fail
@@ -134,6 +189,31 @@ class MerchantController extends Controller
 		$output['store'] = $store;
 		return view('merchant.store',$output);
 	}
+	public function getLinkedStoreOffers(request $request){
+		$rules = array(
+			'id' => 'required',
+		);
+		$validator =  Validator::make($request->all(), $rules );
+        if($validator->fails()){
+            return redirect('/merchant/dashboard');  
+        }
+
+		$store_id = Crypt::decrypt($request->input('id'));
+		if (!$this->checkUserHasStorePermission($store_id)) {
+			 return redirect('/merchant/dashboard');  
+		}
+
+		$offers = Offers::with('Store','favouriteCount','votesCount')
+		              ->where('store_id',$store_id)
+			          ->orderby('created_at','desc')
+			          ->paginate(15);
+
+		$output = ['offers'=>$offers];
+
+		//return $output;
+		return view('merchant.dashboard',$output);
+	}
+
 
 	public function getDashboard(){
 		$user_id = Auth::user()->id;
@@ -149,8 +229,28 @@ class MerchantController extends Controller
 			          ->paginate(15);
 	    
 	    
-	    $output = ['offers'=>$offers ];
+	    $output = ['offers'=>$offers];
 
+		//return $output;
+		return view('merchant.dashboard',$output);
+	}
+
+	public function getAllStoresOffers(){
+		if(!Auth::User()->Stores->is_parent){
+			return redirect('/merchant/dashboard');
+		}
+		$matchThese = [ 'status' => true ,'is_child' => true , 'parent_id' => Auth::User()->Stores->id];
+		$stores = MerchantStore::where($matchThese)->get();
+		$storesArr = [];
+		foreach ($stores as $key => $store) {
+			$storesArr[$key] = $store->id;
+		}
+		$offers = Offers::with('Store','favouriteCount','votesCount')
+		              ->whereIn('store_id',$storesArr)
+			          ->orderby('created_at','desc')
+			          ->paginate(15);
+
+	    $output = ['offers'=>$offers];
 		//return $output;
 		return view('merchant.dashboard',$output);
 	}
@@ -180,6 +280,7 @@ class MerchantController extends Controller
 		if($validator->fails()){
 			 return response()->json(['status'=>'fail' ,'message' =>  $validator->errors()->all()]); 
 		}
+		$is_parent = false;
 
 		$fineprintArr  = explode("\n",$request->input('fineprint'));
 		$fineprint = '';
@@ -189,13 +290,50 @@ class MerchantController extends Controller
 			}
 		}
 
-		$store_id = Auth::user()->Stores->id; 
+		if($request->has('store_token')){
+			if($request->input('store_token') == 'all' && Auth::user()->Stores->is_parent){
+				$store_id = Auth::user()->Stores->id; 
+				$is_parent = true;
+ 			}
+ 			else if($request->input('store_token') == 'all'){
+ 				return response()->json(['status'=>'fail' ,'message' =>  'Not Authorized']);
+ 			}
+ 			else{
+ 				$storeId = Crypt::decrypt($request->input('store_token'));
+ 				if (!$this->checkUserHasStorePermission($storeId)) {
+					return response()->json(['status'=>'fail' ,'message' =>  'Not Authorized']);
+				}
+ 				$store_id = $storeId;
+ 			}
+
+		}
+		else{
+			$store_id = Auth::user()->Stores->id; 
+		}
+
 
 		$offerInput = $request->only('title','startDate','endDate');
 		$offerInput['store_id'] = $store_id;
 		$offerInput['fineprint'] = $fineprint;
 
 		$offer = Offers::create($offerInput);
+
+		if($is_parent){
+		    $offer->is_parent = true;
+		    $offer->save(); 
+			//creating offer for all sub merchants if user selects and if he is super merchant 
+
+			$matchThese = [ 'is_child' => true , 'parent_id' => $store_id];
+			$stores = MerchantStore::where($matchThese)->get();
+			$offerInp = $request->only('title','fineprint','startDate','endDate');
+			$offerInp['is_child'] = true;
+			$offerInp['parent_id'] = $offer->id;
+			foreach ($stores as $store) {
+				$offerInp['store_id'] = $store->id;
+				Offers::create($offerInp);
+			}
+		}
+		
 		
 		return response()->json(['status'=>'success']);
 	}
@@ -209,24 +347,34 @@ class MerchantController extends Controller
 			 return  'fail';
 		}
 
-		$store_id = Auth::user()->Stores->id; 
-		$matchThese = ['id' => $request->input('offer_id') ,'store_id' => $store_id ];
+		$matchThese = ['id' => $request->input('offer_id') , 'is_child' => false ];
 
 		$offer = Offers::where($matchThese)->first();
 		if ($offer == '' || empty($offer)) {
 			return 'fail';
 		}
 
+		if (!$this->checkUserHasStorePermission($offer->store_id)) { // checking if offer can be editable by logged in store
+			return response()->json(['status'=>'fail' ,'message' =>  'Not Authorized']);
+		}
+
 		if($offer->status){
+			$statusInp = false;
 			$offer->status = false;
 			$status = 'disabled';
 		}
 		else{
+			$statusInp = true;
 			$offer->status = true;
 			$status = 'enabled';
 		}
 
 		$offer->save();
+
+		if($offer->is_parent && $this->checkIfStoreIsParent($offer->store_id)){ 
+			$matchThese = ['is_child' => true , 'parent_id' => $offer->id];
+			Offers::where($matchThese)->update(['status'=> $statusInp]);
+		}
 
 		return $status;
 
@@ -238,19 +386,22 @@ class MerchantController extends Controller
             'title' => 'required',
             'startDate' => 'required',
             'endDate' => 'required',
-            'fineprint' => 'required'
+            'fineprint' => 'required',
         ]);
 
         if($validator->fails()){
 			 return response()->json(['status'=>'fail' ,'message' =>  $validator->errors()->all()]);
 		}
 
-		$store_id = Auth::user()->Stores->id; 
-		$matchThese = ['id' => $request->input('offer_id') , 'store_id' => $store_id];
+		$matchThese = ['id' => $request->input('offer_id') , 'is_child' => false];  // child offers are not editable by child merchants
 		$offer = Offers::where($matchThese)->first();
         
 		if(empty($offer)){
 			return response()->json(['status'=>'fail' ,'message' => 'Not Authorized']);
+		}
+
+		if (!$this->checkUserHasStorePermission($offer->store_id)) { // checking if offer can be editable by logged in store
+			return response()->json(['status'=>'fail' ,'message' =>  'Not Authorized']);
 		}
 
 		$fineprintArr  = explode("\n",$request->input('fineprint'));
@@ -261,17 +412,26 @@ class MerchantController extends Controller
 			}
 		}
 
-		foreach ($request->only('title','startDate','endDate') as $key => $value) {
+		$updateValues = $request->only('title','startDate','endDate');
+		$updateValues['fineprint'] = $fineprint;
+
+		foreach ($updateValues as $key => $value) {
 			$offer->$key = $value;
 		}
 
-		$offer->fineprint = $fineprint;
-
 		$offer->save();
+
+		
+        // if offer is parent and store editing this also parent update all child offers
+		if($offer->is_parent && $this->checkIfStoreIsParent($offer->store_id)){ 
+			$matchThese = ['is_child' => true , 'parent_id' => $offer->id];
+			Offers::where($matchThese)->update($updateValues);
+		}
 
 		return response()->json(['status'=>'success' ,'data' => $offer ]);
 
 	}
+
 
 	public function getProfile(){
 		$output = ['user' => Auth::user() ];
@@ -296,10 +456,11 @@ class MerchantController extends Controller
 
 		$tags = Tag::all();
 		$cities = Cities::all();
+		$areas = Areas::all();
 		$states = States::all();
 		$countries = Countries::all();
 
-		$output = ['store' => $store, 'tags' => $tags, 'cities'=> $cities , 'states' => $states , 'countries' => $countries];
+		$output = ['store' => $store, 'tags' => $tags, 'areas' => $areas, 'cities'=> $cities , 'states' => $states , 'countries' => $countries];
 		return view('merchant.storeEdit',$output);
 
 	}
@@ -307,11 +468,12 @@ class MerchantController extends Controller
 	public function editStore(request $request){
 		$validator = Validator::make($request->all(), [
             'store_name' => 'required|max:255',
-            'description' => 'required|min:10',
             'landline' => 'required',
             'cost_two' => 'required',
+            'veg' => 'required',
             'status' => 'required',
             'street' => 'required|max:200',
+            'area_id' => 'required',
             'city_id' => 'required',
             'state_id' => 'required',
             'country_id' => 'required',
@@ -329,7 +491,7 @@ class MerchantController extends Controller
         
         $store_id = Auth::user()->Stores->id;
         $store = MerchantStore::find($store_id);
-		foreach ($request->only('store_name','description','cost_two','landline','status') as $key => $value) {
+		foreach ($request->only('store_name','veg','cost_two','landline','status') as $key => $value) {
 			$store->$key = $value;
 		}
 
@@ -352,7 +514,7 @@ class MerchantController extends Controller
 		$matchThese = ['store_id' => $store_id];
 		$address = MerchantStoreAddress::where($matchThese)->first();
 
-		foreach ($request->only('street','city_id','state_id','country_id','pincode','latitude','longitude') as $key => $value) {
+		foreach ($request->only('street','area_id','city_id','state_id','country_id','pincode','latitude','longitude') as $key => $value) {
 			$address->$key = $value;
 		}
 		$address->save();

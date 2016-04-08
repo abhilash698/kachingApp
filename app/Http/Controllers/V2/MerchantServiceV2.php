@@ -69,7 +69,7 @@ class MerchantServiceV2 extends MerchantService {
 
     protected function checkIfStoreIsParent($store_id){
     	$store = Auth::user()->stores;
-    	if($store->is_parent){
+    	if($store->is_parent && ($store_id == $store->id)){
     		return true;
     	}
     	return false;
@@ -289,7 +289,9 @@ class MerchantServiceV2 extends MerchantService {
 
 		if($request->input('is_parent') && $this->checkIfStoreIsParent($store_id)){ 
 			//creating offer for all sub merchants if user selects and if he is super merchant 
-
+			$offer->is_parent = true;
+		    $offer->save(); 
+		    
 			$matchThese = [ 'is_child' => true , 'parent_id' => $store_id];
 			$stores = MerchantStore::where($matchThese)->get();
 			foreach ($stores as $store) {

@@ -65,8 +65,13 @@
                           <input type="text" class="form-control" value='{{$store->store_name}}' name="store_name" required>
                         </div>
                         <div class="form-group form-group-default required">
-                          <label>Description <span class='error-msg'>{{ $errors->first('description') }}</span></label>
-                          <textarea name='description' style="width:100%; height: 150px;">{{ $store->description }}</textarea>
+                          <label>Veg <span class='error-msg'>{{ $errors->first('veg') }}</span></label>
+                            <div class="">
+                              <input type="radio" value="1" {{ $store->veg ? 'checked="checked"' : ''}}  name="veg" >
+                              <label for="yes">Yes</label>
+                              <input type="radio" value="0" {{ !$store->veg ? 'checked="checked"' : ''}} name="veg" >
+                              <label for="no">No</label>
+                            </div>
                         </div>
                         <div class="form-group form-group-default required">
                           <label>Landline <span class='error-msg'>{{ $errors->first('landline') }}</span></label>
@@ -101,26 +106,37 @@
                         <span class='error-msg'>{{ $errors->first('city_id') }}</span>
                         <select class="cs-select cs-skin-slide" name='city_id' data-init-plugin="cs-select">
                           @foreach($cities as $city)
-                          <option @if( $store->city_id == $city->id)  {{ 'selected' }} @endif value="{{$city->id}}">{{$city->title}}</option>
+                          <option @if( $store->address->city_id == $city->id)  {{ 'selected' }} @endif value="{{$city->id}}">{{$city->title}}</option>
                           @endforeach
                         </select>
+                      </div>
+                      <div class="form-group form-group-default required">
+                        <span class='error-msg'>{{ $errors->first('area_id') }}</span>
+                        <select class="cs-select cs-skin-slide" name='area_id' data-init-plugin="cs-select">
+                          @foreach($areas as $area)
+                          <option @if( $store->address->area_id == $area->id)  {{ 'selected' }} @endif value="{{$area->id}}">{{$area->title}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                      <div class="form-group form-group-default required">
 
                         <span class='error-msg'>{{ $errors->first('state_id') }}</span>
                         <select class="cs-select cs-skin-slide" name='state_id' data-init-plugin="cs-select">
                           @foreach($states as $state)
-                          <option @if($store->state_id == $state->id) {{ 'selected' }} @endif value="{{$state->id}}">{{$state->title}}</option>
-                          @endforeach
-                        </select>
-
-                        <span class='error-msg'>{{ $errors->first('country_id') }}</span>
-                        <select class="cs-select cs-skin-slide" name='country_id' data-init-plugin="cs-select">
-                          @foreach($countries as $country)
-                          <option @if($store->country_id == $country->id) {{ 'selected' }} @endif value="{{$country->id}}">{{$country->title}}</option>
+                          <option @if($store->address->state_id == $state->id) {{ 'selected' }} @endif value="{{$state->id}}">{{$state->title}}</option>
                           @endforeach
                         </select>
                       </div>
 
-                      <br>
+                      <div class="form-group form-group-default required">
+                        <span class='error-msg'>{{ $errors->first('country_id') }}</span>
+                        <select class="cs-select cs-skin-slide" name='country_id' data-init-plugin="cs-select">
+                          @foreach($countries as $country)
+                          <option @if($store->address->country_id == $country->id) {{ 'selected' }} @endif value="{{$country->id}}">{{$country->title}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+
                       <div class="form-group form-group-default required">
                         <label>Pincode <span class='error-msg'>{{ $errors->first('pincode') }}</span></label>
                         <input type="text" class="form-control" value='{{$store->address->pincode }}' name="pincode" required>

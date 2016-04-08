@@ -22,7 +22,6 @@
             <div class="row">
             <form role="form" method='post' action='/admin/edit/supermerchant'>
               {!! csrf_field() !!}
-              <input type='hidden' name='parent_id' value='{{ $parent->id }}'>
               <div class="col-sm-5">
                 <!-- START PANEL -->
                 <div class="panel panel-transparent">
@@ -39,9 +38,6 @@
                       <label class="">Super Merchant</label>
                       <select class="full-width" name='superMerchant' data-placeholder="Select Super Merchant" data-init-plugin="select2" required>
                         <option value="{{$parent->id}}" selected>{{$parent->store_name.', '.$parent->Address->Area->title }}</option>
-                        @foreach ($excludedStores as $store)
-                           @if(isset($store->Address))<option value="{{$store->id}}">{{$store->store_name.', '.$store->Address->Area->title }}</option>@endif
-                        @endforeach
                       </select>
                     </div>
                     <!-- <div>
@@ -63,14 +59,11 @@
                 <!-- START PANEL -->
                 <div class="panel panel-transparent">
                   <div class="panel-body">
-                      <p>Select Child Merchants</p>
+                      <p>Add Child Merchants</p>
                       <br>
                       <div class="form-group form-group-default form-group-default-select2">
                         <label>Child Stores</label>
                         <select class=" full-width" id='selMultiTags'  data-init-plugin="select2" multiple required>
-                          @foreach ($childs as $childStore)
-                          @if(isset($childStore->Address)) <option {{ 'selected '}} value="{{$childStore->id}} " >{{$childStore->store_name.' ,'.$childStore->Address->Area->title }}</option>@endif
-                          @endforeach
 
                           @foreach ($excludedStores as $store)
                           @if(isset($store->Address)) <option  value="{{$store->id}}" >{{$store->store_name.' ,'.$store->Address->Area->title }}</option>@endif
@@ -78,6 +71,10 @@
                         </select>
                         <input type='hidden' name='childMerchants' id='multiMerchants'>
                       </div>
+
+                      @foreach ($childs as $childStore)
+                      @if(isset($childStore->Address)) <p>{{$childStore->store_name.' -> '.$childStore->Address->Area->title }}</p>@endif
+                      @endforeach
                     
                   </div>
                 </div>

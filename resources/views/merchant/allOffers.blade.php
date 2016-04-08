@@ -24,7 +24,7 @@
                 
 
                 <div class="row">
-                 @foreach($offers as $key=> $offer)
+                 @foreach($offers as $offer)
                   <!-- OFFER START -->
                   <div class="col-sm-6 col-md-6 col-lg-4 col-xs-12 offer">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 btn-group">
@@ -33,13 +33,13 @@
                       <input type='hidden' value ='{{$offer->startDate}}' name='offerStartDate'>
                       <input type='hidden' value ='{{$offer->endDate}}' name='offerEndDate'>
                       <input type='hidden' value ='{{$offer->fineprint}}' name='offerFineprint'>
-                      <button type="button" class="btn btn-success @if(!$offer->is_child) offerDisable @else naMessage @endif"  style='float:right;'><i class="toggleI{{$offer->id}} fa @if($offer->status){{ 'fa-toggle-on' }}@else{{ 'fa-toggle-off' }} @endif"></i>
+
+                      <button type="button" class="btn btn-success  offerDisable"  style='float:right;'><i class="toggleI{{$offer->id}} fa @if($offer->status){{ 'fa-toggle-on' }}@else{{ 'fa-toggle-off' }} @endif"></i>
                       </button>
-                      <button type="button" class="btn btn-success @if(!$offer->is_child) offerEdit editObj{{$offer->id}} @else naMessage @endif"  style='float:right;'><i class="fa fa-pencil"></i>
+                      <button type="button" class="btn btn-success offerEdit editObj{{$offer->id}}"  style='float:right;'><i class="fa fa-pencil"></i>
                       </button>
                      <!--  <button type="button" class="btn btn-success" style='float:right;'><i class="fa fa-trash-o"></i>
                       </button> -->
-                      
                     </div>
                     <!-- Card Start -->
                      <div class="card"> 
@@ -65,8 +65,7 @@
                             </span>
                           </div>
                           <div class='col-lg-4 col-md-4 col-sm-4 col-xs-4 dy-txt'>
-                            <span>{{ $offer->Store->Address->Area->title}}</span>
-                            <!-- <i class='fa fa-heart-o'></i>
+                            <i class='fa fa-heart-o'></i>
                             <span> Like</span><span class="bubble">
                                   @if(count($offer->favouriteCount) == 0)
                                     0
@@ -75,7 +74,7 @@
                                     {{ $fav->aggregate }}
                                   @endforeach
                                   @endif
-                            </span> -->
+                            </span>
                           </div>
                           <div class='col-lg-3 col-md-3 col-sm-3 col-xs-3  dy-txt'>
                             <span> more..</span>
@@ -95,8 +94,6 @@
                             <p class='startDate{{$offer->id}}'>{{ date_format(date_create($offer->startDate), 'jS M h:i A') }}</p>
                             <strong>End Time</strong>
                             <p class='startDate{{$offer->id}}'>{{ date_format(date_create($offer->endDate), 'jS M h:i A') }}</p>
-                            <!-- <strong>Area</strong>
-                            <p>{{ $offer->Store->Address->Area->title}}</p> -->
                           </div>
                         </div> 
                       </div>

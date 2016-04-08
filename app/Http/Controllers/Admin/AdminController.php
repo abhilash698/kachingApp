@@ -148,7 +148,6 @@ class AdminController extends Controller
 		$validator = Validator::make($request->all(), [
             'superMerchant' => 'required',
             'childMerchants' => 'required',
-            'parent_id' => 'required'
         ]);
 
         if($validator->fails()){
@@ -162,19 +161,19 @@ class AdminController extends Controller
 		    unset($childs[$key]);
 		}
 
-		$old_parent_id = $request->input('parent_id'); /// first reset all previously added parent and child linking
+		/*$old_parent_id = $request->input('parent_id'); /// first reset all previously added parent and child linking
 
-		MerchantStore::where('id',$old_parent_id)->orWhere('parent_id',$old_parent_id)->update(['is_parent'=> false , 'is_child' => false , 'parent_id' => '0']);
+		MerchantStore::where('id',$old_parent_id)->orWhere('parent_id',$old_parent_id)->update(['is_parent'=> false , 'is_child' => false , 'parent_id' => '0']);*/
 
 		$superMerchant = MerchantStore::find($request->input('superMerchant'));
-		if(!$superMerchant->is_parent){
-			$superMerchant->is_parent = true;
-			$superMerchant->save();
-		}
-		else{
-			return redirect('admin/addSuperMerchant')
-                        ->with('message','Super Merchant Selected already used as Super Merchant');
-		}
+		// if(!$superMerchant->is_parent){
+		// 	$superMerchant->is_parent = true;
+		// 	$superMerchant->save();
+		// }
+		// else{
+		// 	return redirect('admin/addSuperMerchant')
+  //                       ->with('message','Super Merchant Selected already used as Super Merchant');
+		// }
 
         $message = '';
 
