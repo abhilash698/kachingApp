@@ -97,6 +97,8 @@ Route::group(['prefix' => 'api/merchant/v2', 'middleware' => ['api:merchant']], 
     Route::post('/mobile/update' , 'V2\MerchantServiceV2@editMobile');
     Route::post('/linked/offers' , 'V2\MerchantServiceV2@getLinkedStoreOffers');
     Route::post('/getCryptToken' , 'V2\MerchantServiceV2@getCryptToken');
+    Route::post('/linked/offers/all' , 'V2\MerchantServiceV2@getAllLinkedStoreOffers');
+    Route::post('/disable/offer', 'V2\MerchantServiceV2@disableOffer'); 
 
 }); 
 

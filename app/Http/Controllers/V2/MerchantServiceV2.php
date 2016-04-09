@@ -33,10 +33,11 @@ class MerchantServiceV2 extends MerchantService {
 		}
 
 		if($storeMain->is_parent){
+			$linked = [];
 			$matchThese = [ 'is_child' => true , 'parent_id' => $storeMain->id];
 			$stores = MerchantStore::with('Address','OffersCount')->where($matchThese)->get();
 			foreach ($stores as $key => $store) {
-				$linked[$key]['store_id']   = $store->id;
+				$linked[$key]['store_token']   = Crypt::encrypt($store->id);
 				$linked[$key]['store_name'] = $store->store_name;
 				$linked[$key]['store_area'] = $store->Address->Area->title;
 				$linked[$key]['store_city'] = $store->Address->City->title;
@@ -48,21 +49,24 @@ class MerchantServiceV2 extends MerchantService {
 			$linked = '';
 		}
 		 
-		return response()->json(['response_code' => 'RES_SD' , 'messages' => 'Store Details' , 'data' => ['store' => $storeMain , 'user' => $user , 'linked' => $linked ] ]);
+		return response()->json(['response_code' => 'RES_SD' , 'messages' => 'Store Details' , 'data' => ['store' => $storeMain , 'user' => $user , 'linked' => $linked , 'is_parent' => $storeMain->is_parent ] ]);
 	}
 
 	 
 	 
 
     protected function checkUserHasStorePermission($store_id){
-    	$hasStore = false;
-    	$storeId = Auth::user()->stores->id;
-    	$matchThese = ['id' => $store_id , 'parent_id' => $storeId , 'is_child' => true];
+    	$store = Auth::user()->stores;
+    	if($store_id == $store->id){
+    		return true;
+    	}
+
+    	$matchThese = ['id' => $store_id , 'parent_id' => $store->id , 'is_child' => true];
     	$merchant  = MerchantStore::where($matchThese)->first();
 
 		if(empty($merchant) || $merchant == ''){
 			return false;
-		}	
+		}
 		
 		return true;
     }
@@ -139,7 +143,7 @@ class MerchantServiceV2 extends MerchantService {
 		$store_id = Auth::user()->stores->id;
 
 		$store = MerchantStore::find($store_id);
-		$store->address()->create($request->only('street','city_id','state_id','country_id','pincode','latitude','longitude'));
+		$store->address()->create($request->only('street','area_id','city_id','state_id','country_id','pincode','latitude','longitude'));
 
 		return response()->json(['response_code' => 'RES_SAC' , 'messages' => 'Store Address Created' , 'data' => $store->address ],201);
 
@@ -186,16 +190,57 @@ class MerchantServiceV2 extends MerchantService {
 
 	}
 
+	public function disableOffer(request $request){
+		$validator =  Validator::make($request->all(), [
+            'offer_id' => 'required'
+        ]);
+
+        if($validator->fails()){
+			 return response()->json(['response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
+		}
+
+		$matchThese = ['id' => $request->input('offer_id') , 'is_child' => false ];
+
+		$offer = Offers::where($matchThese)->first();
+		if ($offer == '' || empty($offer)) {
+			return response()->json(['response_code' => 'ERR_UNA' , 'messages' => 'User Not Authorized'],403);
+		}
+
+		if (!$this->checkUserHasStorePermission($offer->store_id)) { // checking if offer can be editable by logged in store
+			return response()->json(['response_code' => 'ERR_UNA' , 'messages' => 'User Not Authorized'],403);
+		}
+
+		if($offer->status){
+			$statusInp = false;
+			$offer->status = false;
+			$status = 'disabled';
+		}
+		else{
+			$statusInp = true;
+			$offer->status = true;
+			$status = 'enabled';
+		}
+
+		$offer->save();
+
+		if($offer->is_parent && $this->checkIfStoreIsParent($offer->store_id)){ 
+			$matchThese = ['is_child' => true , 'parent_id' => $offer->id];
+			Offers::where($matchThese)->update(['status'=> $statusInp]);
+		}
+
+		return response()->json(['response_code' => 'ERR_OU' , 'messages' => 'Offer Updated' , 'data' => $status]);
+
+	}
+
+
 
     public function editOffer(request $request){
     	$rules = array(
-			'store_id' => 'required',
 			'offer_id' => 'required',
 			'title' => 'required',
 			'fineprint' => 'required',
 			'startDate' => 'required',
 			'endDate' => 'required',
-			'is_parent' => 'required', // is used to check either editing is done on global offer or normal offer
 			);
 
 		$Validator = $this->customValidator($request->all(), $rules, array());
@@ -203,38 +248,25 @@ class MerchantServiceV2 extends MerchantService {
 		if($Validator->fails()){
 			return response()->json(['response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
 		}
-
-		if($request->has('store_id')){  
-		   // edit offer for only linked store * two cases -> supermerchant tab edit global offer selecting single merchant 
-		   // and sub merchant tab edit individual offer. store token can be passed to edit that store offer only
-			
-			$store_id = $request->input('store_id');
-			
-			if(!$this->checkUserHasStorePermission($store_id)){ 
-			    // check token give is valid , checking wiether token belongs to child merchant
-				
-				return response()->json(['response_code' => 'ERR_UNA' ,'messages' => 'User Not Authorized'],403);
-			}
-		}
-		else{
-			// if token is empty offer belongs to logged in user
-			$store_id = Auth::user()->stores->id;
-		}    
 		
 
-		$matchThese = ['id' => $request->input('offer_id') , 'store_id' => $store_id];
+		$matchThese = ['id' => $request->input('offer_id') , 'is_child' => false];
 		$offer = Offers::where($matchThese)->first();
 
 		if(empty($offer)){
 			return response()->json(['response_code' => 'ERR_UNA' , 'messages' => 'User Not Authorized'],403);
 		}
+		if (!$this->checkUserHasStorePermission($offer->store_id)) { // checking if offer can be editable by logged in store
+			return response()->json(['response_code' => 'ERR_UNA' ,'messages' => 'User Not Authorized'],403);
+		}
+
 		foreach ($request->only('title','fineprint','startDate','endDate') as $key => $value) {
 			$offer->$key = $value;
 		}
 
 		$offer->save();
 
-		if($request->input('is_parent') && $offer->is_parent && $this->checkIfStoreIsParent($store_id)){
+		if($offer->is_parent && $this->checkIfStoreIsParent($offer->store_id)){
 			//edit all child offer if above conditions are satisfied
 
 			$matchThese = ['is_child' => true , 'parent_id' => $offer->id];
@@ -254,7 +286,6 @@ class MerchantServiceV2 extends MerchantService {
 			'fineprint' => 'required',
 			'startDate' => 'required',
 			'endDate' => 'required',
-			'is_parent' => 'required', // is user option , either offer is created as global offer or normal offer
 			);
 
 		$Validator = $this->customValidator($request->all(), $rules, array());
@@ -262,43 +293,47 @@ class MerchantServiceV2 extends MerchantService {
 		if($Validator->fails()){
 			return response()->json(['response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
 		}
+		$is_parent = false;
 
 		$offerArr = $request->only('title','fineprint','startDate','endDate');
 
-		if($request->has('store_id')){
-			// adding offer to single store from super merchant logged in user
-
-			$store_id = $request->input('store_id');
-
-			if(!$this->checkUserHasStorePermission($store_id)){
-				// cheking super merchant has permission to add offer to selected store
-				return response()->json(['response_code' => 'ERR_UNA' ,'messages' => 'User Not Authorized'],403);
-			}
-
-			$offerArr['is_parent'] = false;
+		if($request->has('store_token')){
+			if($request->input('store_token') == 'all' && Auth::user()->Stores->is_parent){
+				$store_id = Auth::user()->Stores->id; 
+				$is_parent = true;
+ 			}
+ 			else if($request->input('store_token') == 'all'){
+ 				return response()->json(['response_code' => 'ERR_UNA' ,'messages' => 'User Not Authorized'],403);
+ 			}
+ 			else{
+ 				$storeId = Crypt::decrypt($request->input('store_token'));
+ 				if (!$this->checkUserHasStorePermission($storeId)) {
+					return response()->json(['response_code' => 'ERR_UNA' ,'messages' => 'User Not Authorized'],403);
+				}
+ 				$store_id = $storeId;
+ 			}
 
 		}
 		else{
-			$store_id = Auth::user()->stores->id;
-			$offerArr['is_parent'] = $request->input('is_parent');
-		}   
-		
+			$store_id = Auth::user()->Stores->id; 
+		}
+
 		$offerArr['store_id'] = $store_id;
 
 		$offer = Offers::create($offerArr);
 
-		if($request->input('is_parent') && $this->checkIfStoreIsParent($store_id)){ 
+		if($is_parent){ 
 			//creating offer for all sub merchants if user selects and if he is super merchant 
 			$offer->is_parent = true;
 		    $offer->save(); 
 		    
 			$matchThese = [ 'is_child' => true , 'parent_id' => $store_id];
 			$stores = MerchantStore::where($matchThese)->get();
+			$offerInp = $request->only('title','fineprint','startDate','endDate');
+			$offerInp['is_child'] = true;
+			$offerInp['parent_id'] = $offer->id;
 			foreach ($stores as $store) {
-				$offerInp = $request->only('title','fineprint','startDate','endDate');
 				$offerInp['store_id'] = $store->id;
-				$offerInp['is_child'] = true;
-				$offerInp['parent_id'] = $offer->id;
 				Offers::create($offerInp);
 			}
 		}
@@ -311,13 +346,13 @@ class MerchantServiceV2 extends MerchantService {
 
 		$store_id = Auth::user()->stores->id; 
 
-		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => Offers::with('votesCount','favouriteCount')->where('store_id',$store_id)->get()]);
+		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => Offers::with('votesCount','Store.Address.Area')->where('store_id',$store_id)->get()]);
 	}
 	 
 
 	public function getLinkedStoreOffers(request $request){
 		$rules = array(
-			'store_id' => 'required',
+			'store_token' => 'required',
 		);
 
 		$Validator = $this->customValidator($request->all(), $rules, array());
@@ -326,7 +361,7 @@ class MerchantServiceV2 extends MerchantService {
 		if($Validator->fails()){
 			return response()->json(['response_code' => 'ERR_RULES' , 'messages' => $Validator->errors()->all() ],400);
 		}
-		$store_id = $request->input('store_id');
+		$store_id = Crypt::decrypt($request->input('store_token'));
 
 
 		if(!$this->checkUserHasStorePermission($store_id)){
@@ -334,7 +369,27 @@ class MerchantServiceV2 extends MerchantService {
 		}
 		 
 
-		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => Offers::with('votesCount','favouriteCount')->where('store_id',$store_id)->get()]);
+		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => Offers::with('votesCount','Store.Address.Area')->where('store_id',$store_id)->get()]);
+	}
+
+	public function getAllLinkedStoreOffers(){
+		if(!Auth::User()->Stores->is_parent){
+			return response()->json(['response_code' => 'ERR_UNA' ,'messages' => 'User Not Authorized'],403);
+		}
+
+		$matchThese = [ 'status' => true ,'is_child' => true , 'parent_id' => Auth::User()->Stores->id];
+		$stores = MerchantStore::where($matchThese)->get();
+		$storesArr = [];
+		foreach ($stores as $key => $store) {
+			$storesArr[$key] = $store->id;
+		}
+		$offers = Offers::with('Store.Address.Area','votesCount')
+		              ->whereIn('store_id',$storesArr)
+			          ->orderby('created_at','desc')
+			          ->get();
+
+		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers ]);
+
 	}
 
 

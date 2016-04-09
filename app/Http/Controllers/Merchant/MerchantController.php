@@ -203,7 +203,7 @@ class MerchantController extends Controller
 			 return redirect('/merchant/dashboard');  
 		}
 
-		$offers = Offers::with('Store','favouriteCount','votesCount')
+		$offers = Offers::with('Store','votesCount')
 		              ->where('store_id',$store_id)
 			          ->orderby('created_at','desc')
 			          ->paginate(15);
@@ -223,7 +223,7 @@ class MerchantController extends Controller
 			return redirect('merchant/add/store');
 		}
 
-		$offers = Offers::with('Store','favouriteCount','votesCount')
+		$offers = Offers::with('Store','votesCount')
 		              ->where('store_id',$store->id)
 			          ->orderby('created_at','desc')
 			          ->paginate(15);
@@ -245,7 +245,7 @@ class MerchantController extends Controller
 		foreach ($stores as $key => $store) {
 			$storesArr[$key] = $store->id;
 		}
-		$offers = Offers::with('Store','favouriteCount','votesCount')
+		$offers = Offers::with('Store','votesCount')
 		              ->whereIn('store_id',$storesArr)
 			          ->orderby('created_at','desc')
 			          ->paginate(15);

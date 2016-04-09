@@ -46,10 +46,6 @@ class AuthController extends Controller
         if ( Auth::user()->hasRole('superAdmin')) {
             return '/admin/dashboard';
         }
-
-        if ( Auth::user()->hasRole('merchant') && Auth::user()->Stores->is_parent) {
-            return '/merchant/linked/dashboard';
-        }
         else if(Auth::user()->hasRole('merchant')){
             return '/merchant/dashboard';
         }
