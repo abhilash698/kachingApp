@@ -115,7 +115,6 @@ class CustomerService extends Controller {
 			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.veg,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
-			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
 			        	(select GROUP_CONCAT(tag_id SEPARATOR ',') FROM tag_store where store_id=offers.store_id GROUP BY store_id) as tags,
 			        	(((acos(sin((".$location['latitude']."*pi()/180)) * 
 				            sin((`Latitude`*pi()/180))+cos((".$location['latitude']."*pi()/180)) * 
@@ -137,7 +136,6 @@ class CustomerService extends Controller {
 			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.veg,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
-			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
 			        	(select GROUP_CONCAT(tag_id SEPARATOR ',') FROM tag_store where store_id=offers.store_id GROUP BY store_id) as tags,
 			        	(((acos(sin((".$location['latitude']."*pi()/180)) * 
 				            sin((`Latitude`*pi()/180))+cos((".$location['latitude']."*pi()/180)) * 
@@ -186,7 +184,6 @@ class CustomerService extends Controller {
 			$offers = DB::select(DB::raw("select offers.*,store.store_name,store.logoUrl,store.landline,store.veg,store.cost_two,address.latitude,address.longitude,merchant.name, 
 			        	(select count(*) from offer_vote where offer_id = offers.id) as votes, 
 			        	(select count(*) from offer_vote where offer_id = offers.id AND user_id =".$user_id.") as hasUserVoted ,
-			        	(select count(*) from offer_favourite where offer_id = offers.id AND user_id =".$user_id.") as hasUserFav,
 			        	(select GROUP_CONCAT(tag_id SEPARATOR ',') FROM tag_store where store_id=offers.store_id GROUP BY store_id) as tags,
 			        	(((acos(sin((".$location['latitude']."*pi()/180)) * 
 				            sin((`Latitude`*pi()/180))+cos((".$location['latitude']."*pi()/180)) * 
@@ -263,7 +260,7 @@ class CustomerService extends Controller {
 
 	}
 
-	public function userFavOffers(request $request){
+	public function userVotedOffers(request $request){
 		$location = $request->only('latitude','longitude');
         $user_id = Auth::user()->id;
 
@@ -278,8 +275,8 @@ class CustomerService extends Controller {
 							            pi()/180))))*180/pi())*60*1.1515
 							        ) as distance  
                                     from users
-                                    right join offer_favourite on offer_favourite.user_id = users.id
-                                    left join offers on offers.id = offer_favourite.offer_id
+                                    right join offer_vote on offer_vote.user_id = users.id AND offer_vote.status = 1
+                                    left join offers on offers.id = offer_vote.offer_id
                                     left join merchant_store as store on store.id = offers.store_id
                                     left join merchant_store_address as address on address.store_id = store.id
                                     where users.id = ".$user_id."

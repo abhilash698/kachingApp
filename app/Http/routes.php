@@ -42,9 +42,9 @@ Route::group(['prefix' => 'api/customer/v1', 'middleware' => ['api:customer']], 
     Route::post('/tags', 'CustomerService@getTags'); 
     Route::post('/offers', 'CustomerService@getOffers');
     Route::post('/offers/search', 'CustomerService@searchOffers');
-    Route::post('/favourite','CustomerService@makeFavoutite');
+    //Route::post('/favourite','CustomerService@makeFavoutite');
     Route::post('/vote','CustomerService@makeVote');
-    Route::post('/favOffers','CustomerService@userFavOffers');
+    Route::post('/votedOffers','CustomerService@userVotedOffers');
     Route::post('/profile','CustomerService@userProfile');
     Route::post('/profile/edit','CustomerService@editProfile');
     //Route::post('/validateOtp','CustomerService@validateOtp');
