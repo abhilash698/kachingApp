@@ -14,7 +14,7 @@ class CreateAreaidColumnMerchantStore extends Migration
     {
         Schema::table('merchant_store_address', function ($table) {
             $table->integer('area_id')->unsigned();
-            $table->foreign('area_id')->references('id')->on('areas');     
+            //$table->foreign('area_id')->references('id')->on('areas');     
         });
     }
 
