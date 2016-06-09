@@ -114,7 +114,7 @@ class ValidateMobileController extends Controller
 
         $mobile_id = Crypt::decrypt($input['mobile_key']); 
 
-        if($input['otp'] === 'ZJKF'){
+        if($input['otp'] === '8978'){
             $matchThese = ['mobile_id' => $mobile_id ];
         }
         else{
