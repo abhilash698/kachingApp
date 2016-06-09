@@ -176,6 +176,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:superAdmin']], functio
     Route::post('/element/edit/{element}', 'Admin\AdminController@editElement');
     Route::get('/tag/{id}/delete', 'Admin\AdminController@deleteTag');
 
+    Route::get('/element/area/add', 'Admin\AdminController@getAddArea');
+    Route::get('/element/area/{area_id}/edit', 'Admin\AdminController@getEditArea');
+    Route::post('/element/area/add', 'Admin\AdminController@addArea');
+    Route::post('/element/area/edit', 'Admin\AdminController@editArea');
+
 });
 
 Route::get('merchant/login', 'Auth\AuthController@getMerchantLogin');

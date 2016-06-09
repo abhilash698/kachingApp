@@ -202,6 +202,55 @@
 	                <!-- END PANEL -->
 	              </div>
 	            </div>
+
+	            <div class='row'>
+	            	<div class="col-md-6">
+	              	<div class="pull-right" style='position:relative; z-index: 12;'>
+	                  <div class='col-xs-4 col-xs-offset-2'><a href="/admin/element/area/add" ><button class="btn btn-primary" >Add Area</button></a></div>
+	                </div>
+	              <!-- START PANEL -->
+	                <div class="panel panel-transparent">
+	                  <div class="panel-heading">
+	                    <div class="panel-title">Areas
+	                    </div>
+	                    <div class="tools">
+	                      <a class="collapse" href="javascript:;"></a>
+	                      <a class="config" data-toggle="modal" href="#grid-config"></a>
+	                      <a class="reload" href="javascript:;"></a>
+	                      <a class="remove" href="javascript:;"></a>
+	                    </div>
+	                  </div>
+	                  <div class="panel-body">
+	                    <div class="table-responsive">
+	                      <table class="table table-hover table-condensed" id="condensedTable">
+	                        <thead>
+	                          <tr>
+	                            <!-- NOTE * : Inline Style Width For Table Cell is Required as it may differ from user to user 
+	                                        Comman Practice Followed
+	                                        -->
+	                            <th style="width:30%">Id</th>
+	                            <th style="width:30%">Title</th>
+	                            <th style="width:30%">City</th>
+	                            <th style="width:40%">Actions</th>
+	                          </tr>
+	                        </thead>
+	                        <tbody>
+	                        @foreach($areas as $area)
+	                          <tr>
+	                            <td class="v-align-middle">{{ $area->id }}</td>
+	                            <td class="v-align-middle semi-bold">{{ $area->title }}</td>
+	                            <td class="v-align-middle semi-bold">{{ $area->City->title }}</td>
+	                            <td class="v-align-middle "><a href="/admin/element/area/{{ $area->id }}/edit"><i class='fa fa-pencil-square-o'></i></a> <!-- &nbsp&nbsp<a href="/admin/city/{{ $city->id }}/delete"><i class='fa fa-trash'></i></a> --></td>
+	                          </tr>
+	                        @endforeach
+	                        </tbody>
+	                      </table>
+	                    </div>
+	                  </div>
+	                </div>
+	                <!-- END PANEL -->
+	              </div>
+	            </div>
 	          </div>
 	    	</div>
           </div>

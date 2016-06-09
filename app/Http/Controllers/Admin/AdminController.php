@@ -55,7 +55,7 @@ class AdminController extends Controller
 	}
 
 	public function getElements(){
-		$output = [ 'tags' => Tag::all() , 'cities'=> Cities::all() , 'states' => States::all() , 'countries' => Countries::all() ];
+		$output = [ 'tags' => Tag::all() , 'cities'=> Cities::all() , 'states' => States::all() , 'countries' => Countries::all() , 'areas' => Areas::with('City')->get() ];
 		return view('admin.elements',$output);
 	}
 
@@ -248,6 +248,53 @@ class AdminController extends Controller
 		}
 
 		return view('admin.editElement',$output);
+	}
+
+	public function getAddArea(){
+		$output['cities']  = Cities::all();
+	    return view('admin.addArea',$output);	
+	}
+
+	public function getEditArea($area_id){
+		$element  = Areas::where('id',$area_id)->first();
+		$output  = ['cities' => Cities::all() , 'title' => $element->title ,'city_id' => $element->city_id , 'id' => $element->id];
+	    return view('admin.editArea',$output);
+	}
+
+	public function editArea(request $request){
+		$validator = Validator::make($request->all(), [
+			'title' => 'required',
+			'area_id' => 'required',
+			'city_id' => 'required'
+        ]);
+        $input  = $request->only('area_id','title','city_id');
+
+        if($validator->fails()){
+        	return redirect('admin/element/area/'.$input['area_id'].'/edit')
+                        ->withErrors($validator);  
+        }
+
+	    $element = Areas::where('id',$input['area_id'])->first();
+        $element->title = $input['title'];
+        $element->city_id = $input['city_id'];
+        $element->save();
+        
+		return redirect('admin/elements');
+	}
+
+	public function addArea(request $request){
+		$validator = Validator::make($request->all(), [
+			'title' => 'required',
+			'city_id' => 'required'
+        ]);
+        if($validator->fails()){
+        	return redirect('admin/element/area/add')
+                        ->withErrors($validator);  
+        }
+
+        Areas::create($request->only('title','city_id'));
+
+		return redirect('admin/elements');
 	}
 
 
