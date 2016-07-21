@@ -167,6 +167,34 @@ class ValidateMobileController extends Controller
         return response()->json(['response_code' => 'RES_OS' , 'messages' => 'OTP Sent' , 'data' => $token ]);
     }
 
+    public function otpLogin(request $request){
+        $input = $request->only('mobile'); 
+
+        $validator =  Validator::make($input, ['mobile' => 'required']);
+        if($validator->fails()){
+            return response()->json([ 'response_code' => 'ERR_RULES' ,'message' => $validator->errors()->all()],400);  
+        }
+
+        $user = User::where('mobile',$input['mobile'])->first();
+        if(empty($user) || $user == ''){
+            return response()->json(['response_code' => 'RES_MNR' , 'messages' => 'Mobile Number Not Registered'],422);
+        }
+
+        if(!$user->hasRole('customer')){
+            return response()->json(['response_code' => 'RES_MNR' , 'messages' => 'Mobile Number Not Registered'],422);
+        }
+
+        $token = bin2hex(random_bytes(40));
+
+        $otp = rand(1000, 9999);
+        $sms = Curl::to('https://control.msg91.com/api/sendhttp.php?authkey=101670ALSycXxv0ZZX56920dcd&mobiles='.$input['mobile'].'&message=Your%20Kaching%20OTP%20is%20'.$otp.'.%20Start%20dealing!&sender=KACHIN&route=4')
+        ->get();
+
+        PasswordOtpReset::create(['user_id' => $user->id , 'token' => $token , 'code' => $otp]);
+
+        return response()->json(['response_code' => 'RES_OS' , 'messages' => 'OTP Sent' , 'data' => $token ]);
+    }
+
     public function verifyForgotOtp(request $request){
         $input = $request->only('otp','token'); 
 

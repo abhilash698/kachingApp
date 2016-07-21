@@ -23,6 +23,11 @@ Route::get('/sms', 'Test@makeCurlSms');
 // Customer API Authentication
 Route::post('api/customer/fb/login', 'Auth\AuthController@fbLogin');
 Route::post('api/customer/google/login', 'Auth\AuthController@googleLogin');
+
+Route::post('api/customer/otpLogin', 'ValidateMobileController@otpLogin');
+Route::post('api/customer/validateOtpLogin', 'Auth\AuthController@postCustomerLogin');
+
+
 Route::post('api/customer/register', 'Auth\AuthController@postCustomerRegister');
 
 Route::post('api/customer/validateOtp', 'ValidateMobileController@validateOtp');

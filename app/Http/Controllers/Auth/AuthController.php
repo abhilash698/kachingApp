@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Role;
 use App\UserSmsCode;
+use App\PasswordOtpReset;
 use Validator;
 use Auth;
 use App\Http\Controllers\Controller;
@@ -322,6 +323,29 @@ class AuthController extends Controller
         $userInput = $request->only('mobile','email','name','password','profileImg','mobile_key');
         $merchantRole = Role::find(2);
         return $this->register($userInput,$merchantRole);
+    }
+
+    public function postCustomerLogin(request $request){
+        $input = $request->only('otp','token'); 
+
+        $validator =  Validator::make($input, ['token' => 'required' , 'otp' => 'required']);
+        if($validator->fails()){
+            return response()->json([ 'response_code' => 'ERR_RULES' ,'message' => $validator->errors()->all()],400);  
+        }
+
+        $matchThese = ['token' => $input['token'] , 'code' => $input['otp']];
+
+        $check = PasswordOtpReset::where($matchThese)->first();
+        if(empty($check) || $check == ''){
+            return response()->json(['response_code' => 'RES_IO' , 'messages' => 'Invalid Otp'],422);
+        }
+
+        $check->is_verified = true;
+        $check->save();
+
+        $user = User::find($check->user_id);
+        
+        return $this->login($user,'customer');
     }
 
     public function postMerchantLogin(request $request){
