@@ -192,7 +192,7 @@ class AuthController extends Controller
 
         $jwt = JWT::encode($token, $key);
 
-        return response()->json(['response_code' => 'TOKEN' , 'data' => $jwt ]);
+        return response()->json(['response_code' => 'TOKEN' , 'data' => $jwt ,'user' => $user ]);
     }
 
     public function getMerchantLogin()
