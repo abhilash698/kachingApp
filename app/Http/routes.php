@@ -36,6 +36,7 @@ Route::post('api/customer/sendOtp', 'ValidateMobileController@sendCustomerOtp');
 Route::post('customer/check', 'Test@postTest');
 
 Route::get('api/cities', 'ElementService@getCities');
+Route::get('api/areas', 'ElementService@getAreas');
 Route::get('api/states', 'ElementService@getStates');
 Route::get('api/Countries', 'ElementService@getCountries');
 Route::get('api/appElements', 'ElementService@appElements');
@@ -104,6 +105,9 @@ Route::group(['prefix' => 'api/merchant/v2', 'middleware' => ['api:merchant']], 
     Route::post('/getCryptToken' , 'V2\MerchantServiceV2@getCryptToken');
     Route::post('/linked/offers/all' , 'V2\MerchantServiceV2@getAllLinkedStoreOffers');
     Route::post('/disable/offer', 'V2\MerchantServiceV2@disableOffer'); 
+
+    Route::post('/child/stores', 'V2\MerchantServiceV2@getAllChildStores'); 
+    //Route::post('/child/offers', 'V2\MerchantServiceV2@getAllStoresOffers'); 
 
 }); 
 

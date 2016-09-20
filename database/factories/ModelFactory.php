@@ -36,6 +36,7 @@ $factory->define(App\MerchantStoreAddress::class, function (Faker\Generator $fak
     return [
         'street' => $faker->streetAddress,
         'city_id' => '1',
+        'area_id' => '1',
         'state_id' => '1',
         'country_id' => '1',
         'pincode' =>'500072',

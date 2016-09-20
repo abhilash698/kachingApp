@@ -78,15 +78,7 @@
             						    <div class="face back">
                               <p class='head-offer'>Fine Print </p>
                               <ul class='fineprint'>
-                                <li>
-                                  offer is valid only untill stocks last.
-                                </li>
-                                <li>
-                                  Kindly recheck with our store managers reg.
-                                </li>
-                                <li>
-                                  Not Valid on Desserts and mocktails
-                                </li>
+                                {!! $offer->fineprint !!}
                               </ul>
                             </div> 
             						  </div> 

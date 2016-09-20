@@ -95,7 +95,7 @@ class MerchantServiceV2 extends MerchantService {
 		}
 
 		
-		$storeInput = $request->only('store_name','cost_two','landline','veg');
+		$storeInput = $request->only('store_name','cost_two','landline','veg','description');
 		$storeInput['user_id'] = Auth::id();
 
 		$tags = $request->only('tags');
@@ -154,7 +154,7 @@ class MerchantServiceV2 extends MerchantService {
 		$store_id = Auth::user()->stores->id;
 
 		$store = MerchantStore::find($store_id);
-		foreach ($request->only('store_name','cost_two','status','landline','veg') as $key => $value) {
+		foreach ($request->only('store_name','cost_two','status','landline','veg','description') as $key => $value) {
 			$store->$key = $value;
 		}
 
@@ -390,6 +390,35 @@ class MerchantServiceV2 extends MerchantService {
 
 		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers ]);
 
+	}
+
+	public function getAllChildStores(){
+		if(!Auth::User()->Stores->is_parent){
+			return response()->json(['response_code' => 'ERR_IR' , 'messages' => 'invalid request' ],400);
+		}
+
+		$matchThese = [ 'status' => true ,'is_child' => true , 'parent_id' => Auth::User()->Stores->id];
+		$stores = MerchantStore::with('Address.Area')->where($matchThese)->get();
+		 
+		return response()->json(['response_code' => 'RES_ST' , 'messages' => 'stores' , 'data' => $stores ]);
+	}
+
+	public function getAllStoresOffers(){
+		if(!Auth::User()->Stores->is_parent){
+			return response()->json(['response_code' => 'ERR_IR' , 'messages' => 'invalid request' ],400);
+		}
+		$matchThese = [ 'status' => true ,'is_child' => true , 'parent_id' => Auth::User()->Stores->id];
+		$stores = MerchantStore::where($matchThese)->get();
+		$storesArr = [];
+		foreach ($stores as $key => $store) {
+			$storesArr[$key] = $store->id;
+		}
+		$offers = Offers::with('Store','votesCount')
+		              ->whereIn('store_id',$storesArr)
+			          ->orderby('created_at','desc')
+			          ->paginate(15);
+
+		return response()->json(['response_code' => 'RES_OFF' , 'messages' => 'Offers' , 'data' => $offers ]);
 	}
 
 

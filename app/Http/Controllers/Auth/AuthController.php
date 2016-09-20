@@ -192,7 +192,20 @@ class AuthController extends Controller
 
         $jwt = JWT::encode($token, $key);
 
-        return response()->json(['response_code' => 'TOKEN' , 'data' => $jwt ,'user' => $user ]);
+        if($type == 'merchant'){
+            $store = MerchantStore::where('user_id',$user->id)->first();
+            if(count($store)){
+                $is_parent = $store->is_parent;
+            }
+            else{
+                $is_parent =false;
+            }
+        }
+        else{
+            $is_parent =false;
+        }
+
+        return response()->json(['response_code' => 'TOKEN' , 'data' => $jwt ,'user' => $user ,'is_parent' => $is_parent]);
     }
 
     public function getMerchantLogin()
