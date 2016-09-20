@@ -7,7 +7,6 @@ use App\Countries;
 use App\States;
 use App\AppElement;
 use App\Tag;
-use App\Areas;
 
 class ElementService extends Controller {
 	
