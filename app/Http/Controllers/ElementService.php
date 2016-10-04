@@ -15,7 +15,7 @@ class ElementService extends Controller {
 	 }
 
 	 public function getAreas(){
-	 	return response()->json(['response_code' => 'RES_CTY' , 'messages' => 'Cities' , 'data' => Areas::get()]);
+	 	return response()->json(['response_code' => 'RES_ARS' , 'messages' => 'Areas' , 'data' => Areas::get()]);
 	 }
 
 	 public function getStates(){

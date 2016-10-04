@@ -295,7 +295,9 @@ class MerchantServiceV2 extends MerchantService {
 		}
 		$is_parent = false;
 
-		$offerArr = $request->only('title','fineprint','startDate','endDate');
+		$offerArr = $request->only('title','fineprint');
+		$offerArr['startDate'] = date('Y-m-d H:i:s',strtotime($request->input('startDate')));
+		$offerArr['endDate'] = date('Y-m-d H:i:s',strtotime($request->input('endDate')));
 
 		if($request->has('store_token')){
 			if($request->input('store_token') == 'all' && Auth::user()->Stores->is_parent){
@@ -398,7 +400,7 @@ class MerchantServiceV2 extends MerchantService {
 		}
 
 		$matchThese = [ 'status' => true ,'is_child' => true , 'parent_id' => Auth::User()->Stores->id];
-		$stores = MerchantStore::with('Address.Area')->where($matchThese)->get();
+		$stores = MerchantStore::with('Address.Area','OffersCount')->where($matchThese)->get();
 		 
 		return response()->json(['response_code' => 'RES_ST' , 'messages' => 'stores' , 'data' => $stores ]);
 	}

@@ -491,7 +491,7 @@ class MerchantController extends Controller
         
         $store_id = Auth::user()->Stores->id;
         $store = MerchantStore::find($store_id);
-		foreach ($request->only('store_name','veg','cost_two','landline','status') as $key => $value) {
+		foreach ($request->only('store_name','veg','cost_two','landline','status','description') as $key => $value) {
 			$store->$key = $value;
 		}
 
