@@ -26,7 +26,7 @@
     {!! Html::style('pages/css/pages.css') !!}
     {!! Html::style('assets/css/jquery.datetimepicker.css') !!}
     {!! Html::style('assets/css/merchant.css') !!}
-     
+    {!! Html::style('assets/css/perfect-scrollbar.min.css') !!}
 
     <!--[if lte IE 9]>
         <link href="pages/css/ie9.css" rel="stylesheet" type="text/css" />
@@ -633,7 +633,7 @@
    <!--  {!! Html::script('assets/js/gallery.js') !!} -->
     <!-- BEGIN PAGE LEVEL JS -->
     {!! Html::script('assets/js/scripts.js') !!} 
-   
+    {!! Html::script('assets/js/perfect-scrollbar.min.js') !!} 
 
     <script type="text/javascript">
       $(function() {
